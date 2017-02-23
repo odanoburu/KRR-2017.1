@@ -1,0 +1,145 @@
+#+Title: Introduction
+
+* Concepts 
+
+- 'John knows that ...' and "..." be a declarative statement.
+
+- Propositions are abstract entitites that can be true or false.
+
+- "John know that p" or "John know that it is true that p."
+
+- "John hopes that Mary will come to the party." and other verbs like
+  'knows', 'hopes', 'regrets', 'fears' and 'doubts' are about
+  /Propositional attitudes/.
+
+- Sentence about knowledge that do not explicity mention propositions:
+  "John know who Mary is taking to the party" or "John know how to get
+  there".
+
+- What about "John believes that p"?
+
+* Representation
+
+- Representation is a relationship between two domains, where the
+  first is meant to 'stand for' or take the pplace of the second.
+
+- Study of the use of formal symbols to represent a collection of
+  propositions believed by some putative agent.
+
+- Is the role of /reasoning/ to brindge the gap between that is
+  represented and what is believed.
+
+- Reasoning is a formal manipulation of the symbols representing a
+  collection of believed propositions to produce representations of
+  new ones.
+
+- Reasoning is a form of calculation, not unlike arithmetic, but over
+  symbols standing for propositions rather than numbers.
+
+- Chess-playing program Example! How to explain a decision about a
+  move? We need to use the right level of details.
+
+* Knowledge-Based Systems
+
+A simple PROLOG program:
+
+#+BEGIN_SRC prolog
+  printColor(snow)  :- !, write("It's white.").
+  printColor(grass) :- !, write("It's green.").
+  printColor(sky)   :- !, write("It's yellow.").
+  printColor(X)     :- write("Beats me").
+#+END_SRC
+
+An its alternative, a knowledge-based one:
+
+#+BEGIN_SRC prolog
+  printColor(X) :- color(X,Y), !,
+		   write("It's "), write(Y), write(".").
+  printColor(X) :- write("Beats me").
+
+  color(snow,write).
+  color(sky,yellow).
+  color(X,Y) :- madeof(X,Z), color(Z,Y).
+  madeof(grass,vegetation).
+  color(vegetation,green).
+#+END_SRC
+
+- What makes a system knowledged-based? It is not the use a formalism
+  like PROLOG or its complexity to intentional description involving
+  knowlegde.  It is the presence of a knowledge base, a collection of
+  symbolic strutures representing what it believes and reasons with
+  during the operation of the system.
+
+- How much of intelligent behaviour needs to be knowledge-based in
+  this sense? Open research.
+
+* Why Knowledge Representation
+
+- Wouldn't it be better to compile the KB and distribute this
+  knowledge to the procedures that need it, as in the first program?
+  Performance would be better.
+
+- Skills and learning.
+
+- Paradox of /experts systems/: they are claimed to be superior
+  precisely because they are knowledge-based, that is, they reason
+  over explicity representation knowledge. But novices are the ones
+  who think and reason. Experts recognize and react.
+
+- Our desired to build a system that can deal with a set of tasks that
+  is /open-ended/.
+
+- The ability to make behavior depend on explicity represented
+  knowledge seems to play off when we cannot specify in advance how
+  the knowledge will be used.
+
+- The second PROLOG program:
+
+  - We can add new tasks. Enumerate all objects with a given color?
+  - Adding new beliefs and extend the behaviour.
+  - We can debug faulty behaviour by locating the erroneous beliefs.
+  - We can concisely explain and justify the behaviour of the system.
+
+* Why reasoning
+
+- actions must depend on what the system believes about the world, as
+  opposed to just what the system has explicity represented.
+
+For example:
+
+1. Patient /x/ is allergic to medication /m/.
+2. Anyone allergic to medication /m/ is also allergic to medication
+   /m'/.
+
+Is it appropriate to describe medication /m'/ fro a patient /x/? 
+
+We do not want to condition behaviour only on the represented facts
+that we can /retrieve/ (a database like).
+
+  /logical entailment/. We say that a propositions represented bt a
+  set of sentences /S/ entail the proposition represented bty a
+  sentence /p/ when the truth of /p/ is implicit in the truth of the
+  sentences in /S/.
+
+Any formalism that we can use for knowledge representation must have a
+well-defined notion of entailment.
+
+Reasoning is the computation of the entailments in a KB. It can be
+difficult. A procedure that always gives us answers in a reasonable
+amount of time may miss some entailments or return incorrect ones.
+
+- Logically incomplete
+- Logically unsound
+
+* Logic
+
+- The study of entailments: languages, conditions and rules of inference.
+
+- At KR level: questions about the representation language and the
+  semantics.
+
+- At the symbolic level: questions about the computational aspects,
+  algorithms, complexity.
+
+
+

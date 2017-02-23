@@ -1,0 +1,30 @@
+#+Title: Course Introduction
+
+* Motivation
+
+- Course in Stanford: https://web.stanford.edu/class/cs227/ and the
+  first class is
+  https://web.stanford.edu/class/cs227/Lectures/lec01.pdf
+
+- SUMO Ontology : http://www.adampease.org/OP/
+
+- Wordnet PT : http://wnpt.brlcloud.com/wn/
+
+- Princeton Wordnet : https://wordnet.princeton.edu/
+
+- Examples of annotated corpus : http://bosque.mybluemix.net
+
+- Example of grammar-based parser :
+  http://www2.parc.com/isl/groups/nltt/xle/ and
+  http://erg.delph-in.net/logon. One tool for PT
+  https://visl.sdu.dk/visl/pt/parsing/automatic/dependency.php
+
+- Theorem Prover: http://www.ai.sri.com/~stickel/snark.html and the
+  TPTP library http://www.cs.miami.edu/~tptp/.
+
+* Books
+
+- https://www.amazon.com/Knowledge-Representation-Reasoning-Artificial-Intelligence/dp/1558609326
+
+- http://www.computational-semantics.eu/
+
