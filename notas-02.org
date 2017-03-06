@@ -1,0 +1,138 @@
+#+Title: FOL
+
+* FOL
+
+- Syntax
+- Semantics
+- Pragmatics
+
+* Syntax of FOL
+
+Logical symbols:
+
+1. pontuation: =(=, =)=.
+2. connnectives: $\neg$, $\land$, $\lor$, $\to$, $\forall$, $\exists$
+   and =.
+3. variables: x, y, z etc. Maybe using subscripts as $x_1$.
+
+Non logical symbols:
+
+1. function symbols: a, b, c, etc
+2. predicate symbols: OlderThan, P, Q etc.
+
+They have arity (number of arguments). Predicates with arity 0 are
+propositional symbols.
+
+If the logical symbols are the keywords, the non logical ones are the
+identifiers.
+
+FOL has terms and formulas (atomic and compounds).
+
+Terms:
+
+1. every variable is a term.
+2. if $t_1, \ldots, t_n$ are terms and $f$ is a function symbol of
+   arity $n$ then $f(t_1,\ldots,t_n)$ is a term.
+
+Formulas:
+
+1. if $t_1, \ldots, t_n$ are terms and $P$ is a predicate symbol of
+   arity $n$ then $P(t_1,\ldots,t_n)$ is an atomic formula.
+
+2. if $t_1$ and $t_2$ are terms, $t_1 = t_2$ is a formula.
+
+3. if $\alpha$ and $\beta$ are formulas and $x$ is a variable, then
+   $\neg \alpha$, $\alpha \land \beta$, $\alpha \lor \beta$, $\alpha
+   \to \beta$, $\forall x \alpha$ and $\exists x \alpha$ are formulas
+   (compound).
+
+
+The propositional subset of FOL is the subset of FOL with only
+predicates with arity 0, such as, $P \land (Q \lor S)$. 
+
+Abbreviations:
+
+1. $(\alpha \to \beta)$  for $(\neg alpha \lor \beta)$
+2. $(\alpha \equiv \beta)$ for $(\alpha \to beta) \land (\beta \to \alpha)$.
+
+Variables can be free or bound. In $\forall y P(x) \land \exits x
+(P(y) \lor Q(x))$, the first $x$ is free and the final two are bound.
+
+A sentence in FOL is a formula without free variables.
+
+* Semantics
+
+1. What should be the semantics for a constant like 'John'?
+
+2. How should be the semantics for $Happy(john)$? 
+
+We can agree only about how the sentences derives from the
+interpretation of the nonlogical symbols involved.
+
+We are looking for a clear specification of meaning of sentences as a
+function of the interpretation of the predicate and function
+symbols. We cannot expect a precise semantics for $DemocracyCountry$,
+$favoriteIceCreamOf$ etc.
+
+The world can be:
+
+1. there are objects in the world.
+
+2. For every predicate symbol P we will have objects that satisfy it
+   and some will not. Same for other arities.
+
+3. no other aspect of the world matter.
+
+For FOL, we do not try to understand the meaning of $DemocracyCountry$
+as a dictionary definition.
+
+** Interpretations 
+
+An interpretation is a tuple $(D,I)$ where D is a nonempty set called
+the domain of I. I is a mapping from the nonlogical symbols to
+functions and relations over D.
+
+D need not be only about mathematical entities. The interpretation of
+and predicate of arity $n$ is:
+
+\[
+I(P) \subset \underbrace{D \times \ldots \times D}_\text{n times}
+\]
+
+The interpretation of a function symbol is:
+
+\[
+I(f) \in (\underbrace{D \times \ldots \times D}_\text{n times} \to D)
+\]
+
+** Propositional subset of FOL
+
+Sometimes we can think about the interpretation of predicates in terms
+of their characteristic functions.
+
+\[
+I(P) \in (\underbrace{D \times \ldots \times D}_\text{n times} \to \{0,1\})
+\]
+
+The tuple of objects is in the relation over D iff the characteristic
+function over those objects has value 1. This helps us with predicates
+with arity zero. $I(P)$ can be either 0 (false) or 1 (true).
+
+We can ignore D taking only $I$ as a mapping from the propositional
+symbols to 0 or 1.
+
+** Denotation 
+
+Case of $bestFriend(John)$ is easy, use I. To deal with terms with
+variables? We need /variable assigments/.
+
+If we have an interpretation I and an assigment $\mu$, the denotation
+of term $t$ is:
+
+1. if x is var, then $[x]_{I,\mu} = \mu[x]$.
+2. if $t_1,\ldots,t_n$ are terms and $f$ is a function symbol of arity $n$ then 
+\[
+[f(t_1,\ldots,t_n)]_{I,\mu} = \mathcal{F}(d_1,\ldots,d_n)
+\]
+where $\mathcal{F} = I(f)$ and $d_i = [t_1]_{I,\mu}$.
+
