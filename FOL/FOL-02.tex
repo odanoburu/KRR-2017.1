@@ -1,0 +1,303 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+
+\mode<presentation>
+{
+  % \usetheme{default}
+  % \usetheme{Montpellier}
+  % \usetheme{Malmoe}
+  % \usetheme{PaloAlto}
+  % \usetheme{Berlin}
+  % \usetheme{Dresden}
+  % \usetheme{Darmstadt}
+  % \usetheme{Warsaw}
+  % \usetheme{Ilmenau}
+  % \usetheme{Frankfurt}
+  % \usetheme[secheader]{Madrid}
+  % \usetheme{Hannover}
+  \usetheme[secheader]{Boadilla}
+  % \usetheme{Dresden}
+  \setbeamercovered{transparent}
+}
+
+\usepackage{textcomp, bbding, wasysym, geometry,graphics,amssymb,amsmath}
+\usepackage{enumerate,latexsym,tabular,shapepar}
+
+\usepackage[all,2cell]{xy} \UseAllTwocells \SilentMatrices
+
+\title{LPO - L\'ogica de Primeira Ordem}
+\subtitle{Estruturas}
+\author{Alexandre Rademaker}
+
+\begin{document}
+
+\frame{\maketitle} 
+
+\frame{\begin{center}
+\begin{tabular}{ccc}
+ \fbox{Todo} & \fbox{homem} &  \fbox{\'e mortal} \\
+$\updownarrow$ & $\updownarrow$ & $\updownarrow$\\
+refer\^encia & objeto de um conjunto & propriedade
+\end{tabular}\end{center}
+\begin{list}{\HandRight}{}
+\item Toda refer\^encia ao conjunto dos homens \'e uma refer\^encia ao conjunto dos mortais.
+\item Todo elemento pertencente ao conjunto denotado por Homem  pertence ao conjunto denotado por Mortal.
+\item $\forall x (H(x)\rightarrow M(x))$
+\end{list}
+}
+
+\frame{\frametitle{Funç\~oes e Relaç\~oes}
+\begin{block}{O pai de Pedro \'e colega de Denise}
+ \xymatrix{Pedro \ar[rr]^{Pai}&& Pai(Pedro)}
+ \xymatrix{
+ &\large\smiley\\
+Denise\ar[ur]\ar[r]^{Colega}\ar[dr] &\large\smiley \\
+&\large\smiley_{Pai(Pedro)}
+}
+Colega(Pai(Pedro), Denise)
+\end{block}
+}
+
+\frame{
+\begin{block}{Formalizando}
+ \[\xymatrix{&\parbox{5cm}{\centering S\'imbolos L\'ogicos \\($\{\forall, \exists, \wedge, \vee, \neg, \rightarrow\}$ + \\\mbox{vari\'aveis)}}
+&\\
+ \mbox{Alfabeto}\ar[ur]\ar[dr] & &\\
+&\parbox{5cm}{\centering
+ s\'imbolos n\~ao l\'ogicos\\
+(definidos pelo usu\'ario)
+}\ar[dl]\ar[d]\ar[dr]&\\
+\mbox{constantes} & \parbox{3cm}{\centering s\'\i mbolos\\ funcionais} & \parbox{4cm}{\centering s\'imbolos\\ predicativos}
+}\]
+\end{block}
+}
+
+\frame{\frametitle{Interpretação e semântica}
+Linguagem = <Jo\~ao, Maria, $\mbox{paiDe}^2$, $\mbox{irm\~aoDe}^2$>\par
+$I$ associa os elementos da linguagem ao seu significado:\par
+$I$(Jo\~ao)$\colon$\textleaf\hspace{2cm}
+$I$(Maria)$\colon\heartsuit$\\
+$I$(irm\~aoDe) = $\{<\heartsuit,\mbox{\textleaf}>, <\mbox{\textreferencemark}, \mbox{\textleaf}>\ldots\}$\\
+$I$(paiDe) = $\{<\sharp,\heartsuit>,<\mbox{\textleaf},\circledast>\ldots\}$\\
+\vspace{1.5cm}
+Posso atribuir valores verdade à sentenças
+}
+
+\frame{
+\begin{itemize}[<+->]
+ \item $\forall x\forall y A \mbox{ \'e a mesma coisa que } \forall y\forall x A$
+ \item $\exists x\exists y A \mbox{ \'e a mesma coisa que } \exists y\exists x A$
+ \item $\forall x\exists y A \mbox{ \underline{n\~ao} \'e a mesma coisa que } \exists y \forall x A$
+ \item $\exists y\forall x Adora(x, y)$ -- Tem uma pessoa que \'e adorada por todos.
+ \item $\forall x\exists y Adora(x, y)$ -- Todo mundo adora algu\'em.
+ \item \textit{Dualidade}: cada quantificador pode ser expresso em função do outro:
+ \begin{itemize}[<+->]
+  \item $\forall x$ Adora($x$, sorvete) \hspace{1.5cm} $\neg\exists x\neg$ Adora($x$, sorvete)
+  \item $\exists x$ Adora($x$, jil\'o) \hspace{1.5cm} $\neg\forall x\neg$ Adora($x$, jil\'o)
+ \end{itemize}
+\end{itemize}
+}
+
+\frame{
+\begin{exampleblock}{Exercício}
+ Reescreva as sentenças abaixo de forma que, se houver a ocorrência de uma negação, ela s\'o ocorrer\'a em um predicado at\^omico:
+\begin{itemize}
+ \item $\neg(\exists x (P(x)\rightarrow \neg Q(x)))$
+ \item $\neg(\forall x (P(x)\rightarrow (Q(x)\vee R(x))))$
+ \item $\neg((\exists x P(x))\wedge (\forall x R(x)))$
+ \item $\neg(\forall x (Q(x)\rightarrow \exists y (A(y)\wedge R(x, y))))$
+ \item $\neg(\forall x\exists y(P(x)\wedge \neg (Q(x)\vee R(x))))$
+\end{itemize}
+\end{exampleblock}
+}
+
+\frame{
+\begin{block}{O que quero dizer com a sentença}
+ $$\forall x (P(x)\rightarrow Q(x))?$$
+\only<2>{essa sentença é verdadeira ou falsa?}
+\end{block}
+}
+
+\frame{
+
+\begin{list}{\HandRight}{}
+\item Sentenças quantificadas s\~ao avaliadas como verdadeiras ou
+  falsas em relação a um universo de discurso (ou domínio).
+
+\item Al\'em disso, na medida em que tratamos tamb\'em com objetos e
+  suas propriedades ou relações, devemos também indicar claramente a
+  qual objeto do universo discurso estamos nos referindo e o
+  significado da propriedade ou relação considerada.
+  
+\item Esse \'e o papel de uma \textit{estrutura}, que podemos pensar
+  como sendo uma tradução da linguagem formal para o Portugu\^es.
+\end{list}
+}
+
+\frame{
+Uma estrutura da LPO nos diz:
+\begin{itemize}
+ \item a que coleção se referem os quantificadores;
+ \item o que os outros par\^ametros denotam.
+\end{itemize}
+\begin{alertblock}{Definição}
+Um \textit{par\^ametro} \'e:\\
+  um quantificador\\
+  um predicado\\
+  uma constante\\
+  uma função
+\end{alertblock}
+}
+
+\frame{
+\begin{alertblock}{Definição}
+ Uma \textit{estrutura} $\mathcal U = <|\mathcal U|, \mathcal P, \mathcal C, \mathcal F>$
+para a nossa linguagem da LPO \'e uma função cujo dom\'inio \'e o conjunto de par\^ametros e \'e tal que:
+\begin{itemize}
+ \item $\mathcal U$ associa a cada quantificador um conjunto n\~ao-vazio $|\mathcal U|$, chamado o universo de $\mathcal U$;
+ \item $\mathcal U$ associa a cada predicado $n$-\'ario $P$ uma relação $n$-\'aria $P^{\scriptscriptstyle\mathcal U}\subseteq|\mathcal U|^{\scriptscriptstyle\mathcal U}$,
+i.e., $P^{\scriptscriptstyle\mathcal U}$ \'e um conjunto de $n$-uplas de membros do universo;
+ \item $\mathcal U$ associa a cada constante $c$ um membro $c^{\scriptscriptstyle\mathcal U}$ do universo $|\mathcal U|$;
+ \item $\mathcal U$ associa a cada função $n$-ária $f$ uma operação $n$-ária em $|\mathcal U|$, i.e.,
+$f^{\scriptscriptstyle\mathcal U}\colon|\mathcal U|^n\rightarrow|\mathcal U|$
+\end{itemize}
+\end{alertblock}
+}
+
+\begin{frame}
+
+  Na presença de uma estrutura, podemos traduzir sentenças da
+  linguagem formal para o Portugu\^es e tentar dizer se essas
+  tradu\c{c}\~oes s\~ao verdadeiras ou falsas.
+
+  \begin{exampleblock}{Exemplo}
+    Considere a linguagem para a Teoria dos Conjuntos, cujo \'unico
+    par\^ametro, al\'em de $\forall$ e $\exists$, \'e $<$:
+
+    \begin{itemize}
+    \item $|\mathcal U|\colon =$ o conjunto dos n\'umeros naturais
+    \item $\textlbrackdbl <(m,n)\textrbrackdbl^{\scriptscriptstyle\mathcal U}\colon m$ \'e menor que $n$.
+      \vspace{1cm}
+    \item $\exists x\forall y (\neg<(y,x))$
+      \only<2>{
+      \item Existe um n\'umero que \'e menor que (ou igual a) todos os outros.
+      \item Sabemos que essa sentença é verdadeira.
+      \item Dizemos ent\~ao que $\exists x\forall y (\neg<(y,x))$ \'e verdadeira em $\mathcal U$
+      \item ou que $\mathcal U$ \'e um \textit{modelo} da sentença.}
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Exemplo}
+
+  Consider the binary relation \textbf{is-a-factor-of} on the domain
+  $\{1,2,3,4,5,6\}$
+  
+  \begin{itemize}
+    \item List all the ordered pairs in the relation.
+    \item Display the relation as a directed graph.
+    \item Display the relation in tabular form.
+    \item Is the relation reflexive? symmetric? transitive?
+  \end{itemize}
+\end{frame}
+
+\frame{
+Dada uma estrutura $\mathcal U$, uma valoração $\mathnormal v$ para essa estrutura, \'e uma função que vai do conjunto das sentenças da linguagem da LPO
+em $\{V, F\}$, tal que:
+\begin{itemize}
+ \item $\mathnormal v(P(t_1, \ldots, t_n)) = \left\{
+\begin{array}{c l}   
+    V &\mbox{se a propriedade } P^{\scriptscriptstyle\mathcal U} \mbox{ for satisfeita pelos}\\
+& \mbox{ pelos objetos } t_1^{\scriptscriptstyle\mathcal U},\ldots, t_n^{\scriptscriptstyle\mathcal U},\mbox{nessa ordem }\\
+    F& \mbox{caso contr\'ario }
+\end{array}\right.$
+  \item $\mathnormal v(\forall A) = \left\{
+\begin{array}{c l}   
+    V &\mbox{se } \mathnormal v(A[x\leftarrow c])=V \mbox{ para cada objeto } c^{\scriptscriptstyle\mathcal U}\in |\mathcal U|\\
+%& \mbox{ do } t_1^{\scriptscriptstyle\mathcal U},\ldots, t_n^{\scriptscriptstyle\mathcal U},\\
+    F& \mbox{caso contr\'ario (o que isso significa?) }
+\end{array}\right.$
+ \item $\mathnormal v(\exists A) = \left\{
+\begin{array}{c l}   
+    V &\mbox{se } \mathnormal v(A[x\leftarrow c])=V \mbox{ para algum objeto } c^{\scriptscriptstyle\mathcal U}\in |\mathcal U|\\
+%& \mbox{ do } t_1^{\scriptscriptstyle\mathcal U},\ldots, t_n^{\scriptscriptstyle\mathcal U},\\
+    F& \mbox{caso contr\'ario (o que isso significa?) }
+\end{array}\right.$
+ \item Os conectivos s\~ao definidos como em LP.
+ \end{itemize}
+ }
+
+\frame{
+\begin{exampleblock}{Exemplo}
+$|\mathcal U|$ \'e o conjunto dos n\'umeros naturais\\
+$a^{\scriptscriptstyle\mathcal U}\colon 2$\\
+$b^{\scriptscriptstyle\mathcal U}\colon 3$\\
+$c^{\scriptscriptstyle\mathcal U}\colon 4$\\
+% $f^{\scriptscriptstyle\mathcal U}(x)\colon x+ 2$\\
+$P^{\scriptscriptstyle\mathcal U}(x)$ \'e par\\
+$Q^{\scriptscriptstyle\mathcal U}(x)\colon x$ \'e \'impar\\
+$R^{\scriptscriptstyle\mathcal U}(x)\colon x$ \'e primo\\
+% $S^{\scriptscriptstyle\mathcal U}(x, y)\colon x$ \'e menor que ou igual a $y$
+\end{exampleblock}
+Vamos avaliar as seguintes sentenças de acordo com essa interpretação:
+\begin{itemize}[<+->]
+ \item $\mathnormal v (P(a)) = V$;
+ \item $\mathnormal v (P(b)) = F$;
+ \item $\mathnormal v (\exists x(P(x) \wedge R(x))) = V$;
+ \item $\mathnormal v (\forall x(P (x) \rightarrow R(x))) = F$;
+ \item $\mathnormal v (\exists x(P (x) \wedge\neg R(x)) = V$;
+ \item $\mathnormal v (\forall x(P (x) \vee Q(x)))  = V$.
+\end{itemize}
+}
+
+\frame{
+\begin{exampleblock}{Exemplo}
+Considere\\
+ $|\mathcal U|$ \'e o conjunto $\{-1, 0, 1\}$\\
+e as interpretações usuais para $`+', `=', `<'$. Determine o valor de verdade para:
+\begin{itemize}
+ \item $\forall x \exists y (x + y = 0)$;
+ \item $ \exists x\forall y (x + y = 0)$;
+ \item $\exists x \forall y (x \geq y)$;
+ \item $\forall x \forall y \exists z (x + y = z)$
+
+\end{itemize}
+\end{exampleblock}}
+
+\frame{\frametitle{Exerc\'icio}
+Para cada uma das seguintes f\'ormulas, indique:
+\begin{enumerate}
+ \item Se \'e uma negação, uma conjunção, uma disjunção, uma implicação, uma f\'ormula univerdal ou uma f\'ormula existencial;
+ \item o escopo do quantificador;
+ \item as vari\'aveis livres;
+ \item se \'e uma sentença.
+\end{enumerate}
+\begin{itemize}
+ \item $\exists x(A(x,y) \wedge B(x)$
+ \item $\exists x\exists y(A(x,y) \rightarrow B(x))$
+ \item $\neg\exists x\exists yA(x,y) \rightarrow B(x)$
+ \item $\forall x\neg \exists y(A(x,y))$
+ \item $\exists xA(x,y) \wedge B(x)$
+ \item $\exists xA(x,x) \wedge \exists yB(y)$
+\end{itemize} 
+}
+
+\frame{\frametitle{Exerc\'icio}
+Traduza as seguintes sentenças para LPO:
+\begin{enumerate}
+ \item Todas as coisas s\~ao amargas ou doces.
+ \item Ou tudo \'e amargo ou tudo \'e doce.
+ \item H\'a algu\'em que \'e amado por todos.
+ \item Ningu\'em \'e amado por ningu\'em.
+ \item Se algu\'em \'e barulhento, todo mundo fica aborrecido.
+\end{enumerate}
+}
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,488 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+
+\mode<presentation>
+{
+  % \usetheme{default}
+  % \usetheme{Montpellier}
+  % \usetheme{Malmoe}
+  % \usetheme{PaloAlto}
+  % \usetheme{Berlin}
+  % \usetheme{Dresden}
+  % \usetheme{Darmstadt}
+  % \usetheme{Warsaw}
+  % \usetheme{Ilmenau}
+  % \usetheme{Frankfurt}
+  % \usetheme[secheader]{Madrid}
+  % \usetheme{Hannover}
+  \usetheme[secheader]{Boadilla}
+  % \usetheme{Dresden}
+  \setbeamercovered{transparent}
+}
+
+\title{LPO - Lógica de Primeira Ordem}
+\author{Alexandre Rademaker}
+
+\begin{document}
+
+\frame{\maketitle}
+
+\section{Introdução}
+
+\frame{
+
+  Como simbolizar sentenças como
+
+\begin{itemize}[<+->]
+ \item Todo mundo adora l\'ogica.
+ \item Tem um restaurante muito bom em Laranjeiras.
+ \item Cada um no seu quadrado.
+ \item Existe um n\'umero que \'e m\'ultiplo de 3.
+\end{itemize}
+}
+
+\begin{frame}
+\begin{itemize}[<+->]
+ \item ``Joana adora l\'ogica'' \'e um caso particular de ``Todo mundo adora l\'ogica.''
+ \item ``Jo\~ao adora l\'ogica''\'e um caso particular de ``Todo mundo adora l\'ogica.''
+ \item Estou dizendo que existe um universo, um dom\'inio (o conjunto de todas as pessoas no mundo) e que todo mundo nesse
+universo adora l\'ogica.
+ \item Podemos ver ``adorar l\'ogica'' como uma propriedade. Joana e Jo\~ao, por exemplo, tem essa propriedade.
+\end{itemize}
+\end{frame}
+
+\frame{
+2 \'e menor que 3.\\
+\pause
+``ser menor que'' é uma relação \\
+\pause
+assim como ``serem irm\~aos'' na sentença\ ``Joana e Jo\~ao s\~ao irm\~aos.''\\
+\pause
+
+Chamaremos de predicado uma expressão utilizada para representar
+uma propriedade de um objeto ou relação entre um ou mais objetos.
+}
+
+\frame{\title{Simbolizaçao}
+ \textit{Existe um número primo.}\\\pause
+ \textit{Existe um objeto $x$ (de um certo domínio) tal que $x$ é um número primo.}\\\pause
+ Colocando $Primo(x)$ para representar $x$ \'e primo, podemos simbolizar a sentença\ acima da seguinte forma:
+ $\exists xP(x)$
+}
+
+\frame{\frametitle{Formalizaçao\ -- LPO}
+Usaremos os seguintes s\'imbolos:
+ \begin{itemize}[<+->]
+  \item símbolos lógicos ($\land$, $\lor$, $\to$, $\neg$ etc);
+  \item os quantificadores
+\begin{description}[<+->]
+ \item[universal] $\forall$ (``para todo'')
+ \item[existencial] $\exists$ (``existe (pelo menos um)'')
+\end{description}
+\item predicados ($P, Q, R\ldots$) n-\'arios (ou de grau n) que dependem de:
+\item vari\'aveis ($x, y, z\ldots$)
+\end{itemize}
+\begin{block}{Observaçao}
+ Note que um predicado pode ter grau 0.
+\end{block}
+}
+
+\frame{\frametitle{Exemplos}
+$P(x)\colon x$ \'e um n\'umero natural,\\
+$Q(x)\colon x$ \'e maior que ou igual a 0,\\
+$R(x)\colon x$ \'e primo,\\
+$S(x)\colon x$ \'e par,\\
+$T(x)\colon x$ \'e negativo.\\
+\vspace{1cm}
+\only<2,3>{$\forall x(P(x)\rightarrow Q(x))$} \only<3>{-- Todo n\'umero natural \'e maior que ou igual a 0.}
+\only<4,5>{$\exists x(P(x) \wedge R(x))$} \only<5>{-- H\'a um n\'umero natural que \'e primo.}
+\only<6,7>{$\exists x(P(x) \wedge (\neg S(x)))$} \only<7>{-- Algum n\'umero natural n\~ao \'e par.}
+\only<8,9>{$\forall x(P(x) \rightarrow (\neg T(x)) )$} \only<9>{-- Todo n\'umero natural n\~ao \'e negativo.}
+}
+
+\frame{
+\begin{itemize}[<+->]
+ \item $\forall xP(x)$ \'e equivalente a $\forall yP(y)$\newline
+que \'e equivalente a $\forall zP(z)$\ldots
+ \item $\forall xP(x)\wedge x$ \'e equivalente a $\forall yP(y)\wedge x$\newline
+que \'e equivalente a $\forall zP(z)\wedge x$\ldots
+ \item Qual \'e a diferença?
+ \item Vari\'avel ligada \textit{versus} vari\'avel livre.
+\end{itemize}
+}
+
+\frame{
+\begin{itemize}[<+->]
+ \item Chamaremos de \textit{vari\'avel quantificada} uma express\~ao da forma $\forall x$ ou $\exists x$.
+ \item A menor f\'ormula que se segue \`a ocorr\^encia de uma vari\'avel quantificada \'e chamada de \textit{escopo} dessa vari\'avel.
+ \item $(\forall x {\color{blue}P(x)}) \rightarrow (\forall x {\color{blue}Q(x,y)} \vee R(x))$
+ \item $\forall x[{\color{blue} P(x) \rightarrow (\forall x {\color{green}Q(x,y)} \vee R(x))}]$
+ \item $(\forall x {\color{blue}P(x)}) \rightarrow (\forall x {(\color{green}Q(x,y) \vee R(x))})$
+\end{itemize}
+}
+
+\frame{\frametitle{Substituiçao}
+\begin{itemize}[<+->]
+ \item Indicamos por $A[x\leftarrow a]$ ou $A^x_a$ a substituiçao\ de todas as ocorr\^encias \textbf{livres}
+de $x$ por $a$.
+ \item $(\forall xP(x))[x\leftarrow a] = \forall xP(x)$
+ \item $(\forall xP(x)\wedge x)[x\leftarrow a] = \forall xP(x)\wedge a$
+ \item $((\forall x P(x)) \rightarrow (\forall x Q(x,y) \vee R(x)))[x\leftarrow a] =$\\
+$(\forall x P(x)) \rightarrow (\forall x Q(x,y) \vee R(a))$
+ \item $((\forall x P(x)) \rightarrow (\forall x Q(x,y) \vee R(x)))[y\leftarrow a] = $\\
+$(\forall x P(x)) \rightarrow (\forall x Q(x,a) \vee R(x))$
+ \item $(\forall x[ P(x) \rightarrow (\forall x Q(x,y) \vee R(x))])[x\leftarrow a] = $\\
+$\forall x[ P(x) \rightarrow (\forall x Q(x,y) \vee R(x))]$
+\end{itemize}
+}
+
+\frame{\frametitle{Exerc\'icio}
+\begin{block}{Formalize:}
+\begin{itemize}
+ \item Todo n\'umero par \'e divisível por 2,
+ \item H\'a um n\'umero \'impar que \'e primo,
+ \item Algum n\'umero par n\'ao \'e primo,
+ \item Todo n\'umero par n\~ao \'e \'impar,
+\end{itemize}
+\end{block}
+\only<2->{De que propriedades precisamos?}
+}
+
+\frame{
+\begin{block}{}
+  $P(x)\colon x$ \'e par\\
+  $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+ {\color{gray} $P(x)\colon x$ \'e par\\
+  $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo}
+\vspace{1.5cm}
+\begin{itemize}[<+->]
+ \item Todo n\'umero par \'e divis\'ivel por 2.
+\begin{itemize}[<+->]
+ \item $\forall x(P(x)\rightarrow D(x))$
+\end{itemize}
+ \item Não existe um n\'umero par que n\~ao seja divisível por 2.
+\begin{itemize}[<+->]
+\item  $\neg\exists x(P(x)\wedge \neg D(x))$
+\end{itemize}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+ {\color{gray}
+  $P(x)\colon x$ \'e par\\
+  $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo
+}
+\vspace{1.5cm}
+\begin{itemize}[<+->]
+ \item H\'a um n\'umero \'impar que \'e primo.
+\begin{itemize}[<+->]
+ \item $\exists x(I(x)\wedge R(x))$
+\end{itemize}
+\item Nem todo n\'umero \'impar n\~ao \'e primo.
+\begin{itemize}[<+->]
+ \item $\neg\forall x(I(x)\rightarrow \neg R(x))$
+\end{itemize}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{} {\color{gray}
+  $P(x)\colon x$ \'e par\\
+  $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo
+}
+\vspace{1.5cm}
+\begin{itemize}[<+->]
+ \item Algum n\'umero par n\'ao \'e primo.
+\begin{itemize}[<+->]
+ \item $\exists x(P(x)\wedge \neg R(x))$
+\end{itemize}
+ \item Nem todo n\'umero par \'e primo.
+\begin{itemize}[<+->]
+ \item $\neg\forall x(P(x)\rightarrow \neg R(x))$
+\end{itemize}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{} {\color{gray}
+  $P(x)\colon x$ \'e par\\
+  $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo
+}
+\vspace{1.5cm}
+\begin{itemize}[<+->]
+ \item Todo n\'umero par n\~ao \'e \'impar.
+\begin{itemize}[<+->]
+ \item $\forall x(P(x)\rightarrow \neg I(x))$
+\end{itemize}
+ \item Nenhum n\'umero par \'e \'impar.
+\begin{itemize}[<+->]
+ \item $\neg\exists x(P(x)\wedge I(x))$
+\end{itemize}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+\begin{itemize}
+ \item Todo n\'umero par \'e divis\'ivel por 2,
+ \item H\'a um n\'umero \'impar que \'e primo,
+ \item Algum n\'umero par n\'ao \'e primo,
+ \item Todo n\'umero par n\~ao \'e \'impar,
+\end{itemize}
+\end{block}
+\only<2->{E como fica a negação dessas sentenças?}
+}
+
+% \frame{
+% \begin{block}{}
+% \begin{itemize}
+%  \item Todo n\'umero par \'e divis\'ivel por 2,
+% \only<2> {\item Existe um n\'umero par que n\~ao \'e divis\'ivel por 2}
+% \only<3>  {\item N\~ao \'e o caso que todo  n\'umero par \'e divis\'ivel por 2}
+% \end{itemize}
+% \end{block}}
+% 
+% \frame{
+% \begin{block}{}%$\forall x(P(x)\rightarrow D(x))$}
+%  %\item \only<3>{$\neg\exists x(P(x)\wedge \neg D(x))$
+%  \begin{itemize}
+%  \item H\'a um n\'umero \'impar que \'e primo,
+% \only<2>  {\item Todo n\'umero \'impar n\~ao \'e primo,}
+% \only<3>  {\item Nenhum n\'umero \'impar \'e primo}
+% \end{itemize}
+% \end{block}
+% }
+% 
+% \frame{
+% \begin{block}{}
+%  \begin{itemize}
+%  \item Algum n\'umero par n\'ao \'e primo,
+%  \only<2>  { Todo n\'umero par \'e primo,}
+%  \only<3>  {\item N\~ao existe um n\'umero par que n\~ao seja primo}
+% \end{itemize}
+% \end{block}
+% }
+% 
+% \frame{
+% \begin{block}{}
+%  \begin{itemize}
+%  \item Todo n\'umero par n\~ao \'e \'impar,
+%   \only<2>{\item Existe um n\'umero par que \'e \'impar,}
+% \end{itemize}
+% \end{block} \item 
+% }
+
+% \frame{Formalizem as negaç{c}\~oes:
+% \begin{block}{}
+%  \begin{itemize}
+%  \item Existe um n\'umero par que n\~ao \'e divis\'ivel por 2
+%  \item Todo n\'umero \'impar n\~ao \'e primo, Nenhum n\'umero \'impar \'e primo
+%  \item Todo n\'umero par \'e primo, N\~ao existe um n\'umero par que n\~ao seja primo
+%  \item Existe um n\'umero par que \'e \'impar,
+% \end{itemize}
+% \end{block}
+% }3
+
+\frame{
+\begin{block}{}
+ \only<2->{
+ {\color{gray}$P(x)\colon x$ \'e par\\
+ $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo}
+\vspace{1.5cm}
+} \begin{itemize}
+      \item N\~ao \'e o caso que, todo n\'umero par \'e divis\'ivel por 2
+      \only<2->{
+	  \begin{itemize}
+	    \item $\neg\forall x(P(x)\rightarrow D(x))$
+	  \end{itemize}
+      }
+      \item Existe um n\'umero par que n\~ao \'e divis\'ivel por 2
+      \only<3->{
+	\begin{itemize}
+	  \item $\exists x(P(x)\wedge\neg D(x))$
+	\end{itemize}
+      }
+ \end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+
+\only<2->{
+{\color{gray}  $P(x)\colon x$ \'e par\\
+  $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo}
+}
+\vspace{1.5cm}
+\begin{itemize}
+ \item Nenhum n\'umero \'impar 3 \'e primo.
+\only<2->{\begin{itemize}
+ \item $\neg\exists x(I(x)\wedge R(x))$
+\end{itemize}}
+ \item Todo n\'umero \'impar \'e n\~ao primo.
+\only<3->{\begin{itemize}
+ \item $\forall x(I(x)\rightarrow \neg R(x))$
+\end{itemize}}
+
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+\only<2->{{\color{gray} 
+  $P(x)\colon x$ \'e par\\
+  $I(x)\colon x$ \'e \'impar\\
+  $D(x)\colon x$ \'e divis\'ivel por 2\\
+  $R(x)\colon x$ \'e primo
+}}
+\vspace{1.5cm}\begin{itemize}
+ \item Todo n\'umero par \'e primo.
+\only<2->{\begin{itemize}
+ \item $\forall x(P(x)\rightarrow R(x))$
+\end{itemize}}
+ \item N\~ao existe um n\'umero par que n\~ao seja primo.
+\only<3>{\begin{itemize}
+ \item $\neg\exists x(P(x)\wedge \neg R(x))$
+\end{itemize}}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+\only<2->{ {\color{gray}  $P(x)\colon x$ \'e par.\\
+ $I(x)\colon x$ \'e \'impar.\\
+  $D(x)\colon x$ \'e divis\'ivel por 2.\\
+  $R(x)\colon x$ \'e primo.
+}}
+\vspace{1.5cm}\begin{itemize}
+ \item  N\~ao \'e o caso que, todo n\'umero par n\~ao \'e \'impar.
+\only<2->{\begin{itemize}
+ \item $\neg\forall x(P(x)\rightarrow \neg I(x))$
+\end{itemize}}
+ \item Existe um n\'umero par que \'e \'impar,
+\only<3>{\begin{itemize}
+ \item $\exists x(P(x)\wedge I(x))$
+\end{itemize}}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{Sabemos que $\neg (A\wedge B) \equiv A\rightarrow\neg B$, logo:}
+\begin{itemize}
+ \item Todo n\'umero par \'e divis\'ivel por 2,
+ \item $\forall x(P(x)\rightarrow D(x))$
+ \item \only<2>{$\forall x\neg(P(x)\wedge \neg D(x))$}
+ \item $\neg\exists x(P(x)\wedge \neg D(x))$
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+\begin{itemize}
+ \item H\'a um n\'umero \'impar que \'e primo,
+ \item $\exists x(I(x)\wedge R(x))$
+ \item \only<2>{$\exists x\neg(I(x)\rightarrow \neg R(x))$}
+ \item $\neg\forall x(I(x)\rightarrow \neg R(x))$
+\end{itemize}% \item \only<3>{$\neg\exists x(P(x)\wedge \neg D(x))$
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+\begin{itemize}
+ \item Algum n\'umero par n\'ao \'e primo,
+ \item $\exists x(P(x)\wedge \neg R(x))$
+ \item \only<2>{$\exists x\neg(P(x)\rightarrow \neg R(x))$}
+ \item $\neg\forall x(P(x)\rightarrow \neg R(x))$
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+\begin{itemize}
+ \item Todo n\'umero par n\~ao \'e \'impar,
+ \item $\forall x(P(x)\rightarrow \neg I(x))$
+ \item \only<2>{$\forall x\neg(P(x)\wedge I(x))$}
+ \item $\neg\exists x(P(x)\wedge I(x))$
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{block}{}
+ \begin{itemize}[<+->]
+\item Qual \'e a relaçao\ entre $\forall$ e $\exists$?
+\item $\neg\forall xA$ \'e equivalente a $\exists x\neg A$
+\item $\neg\exists xA$ \'e equivalente a $\forall x\neg A$
+\item $\neg\forall x\neg A$ \'e equivalente a $\exists x A$
+\item $\neg\exists x\neg A$ \'e equivalente a $\forall x A$
+\vspace{1.5cm}
+\item Ordem:
+ \begin{itemize}
+ \item $\forall x\exists y(x=5y)$
+ \item $\exists y\forall x(x=5y)$
+ \end{itemize}
+\end{itemize}
+\end{block}
+}
+
+\frame{
+\begin{itemize}
+ \item Existe um n\'umero que \'e divis\'ivel por 3.
+\only<2->{\begin{itemize}
+ \item $D(x,y)\colon x$ \'e divis\'ivel por $y$.
+ \item $\exists x(D(x,3))$
+\end{itemize}}
+ \item A soma de um n\'umero par e 2 \'e um n\'umero par.
+\only<3->{\begin{itemize}
+  \item $P(x)\colon x$ \'e par.
+ \item $S(x, y)\colon$ a soma de $x$ e $y$.
+ \item $\forall x( P(x)\rightarrow P(S(x,2)))$
+\end{itemize}}
+ \item 2 \'e o \'unico n\'umero primo que \'e par.
+ \only<4->{\begin{itemize}
+  \item $P(x)\colon x$ \'e par.
+  \item $R(x)\colon x$  \'e primo.
+  \item $=(x,y)\colon x$ \'e igual de $y$.
+  \item $\forall x(=(x,2)\leftrightarrow P(x)\wedge R(x))$
+\end{itemize}}
+\end{itemize}}
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,354 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  % \usetheme{default}
+  % \usetheme{Montpellier}
+  % \usetheme{Malmoe}
+  % \usetheme{PaloAlto}
+  % \usetheme{Berlin}
+  % \usetheme{Dresden}
+  % \usetheme{Darmstadt}
+  % \usetheme{Warsaw}
+  % \usetheme{Ilmenau}
+  % \usetheme{Frankfurt}
+  % \usetheme[secheader]{Madrid}
+  % \usetheme{Hannover}
+  \usetheme[secheader]{Boadilla}
+  % \usetheme{Dresden}
+  \setbeamercovered{transparent}
+}
+
+% \usepackage{proof}
+% \usepackage{bussproofs}
+% \usepackage{tabularx}
+% \usepackage{boxedminipage}
+% \usepackage{algorithmic}
+% \usepackage{algorithm}
+% \usepackage{qtree}
+\usepackage{ulem}
+\usepackage[latin1]{inputenc}
+% \usepackage{ifthen}
+\usepackage{pgf}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{matrix,arrows}
+
+\usepackage{latexsym}
+\usepackage{stmaryrd}
+\usepackage{mathrsfs}
+\usepackage{amsfonts,amssymb,amsthm,amsmath}
+
+% \newboolean{numberspec}
+% \setboolean{numberspec}{false}
+% \newcounter{specline}
+
+\title{Lógica de Primeira Ordem}
+\author{Alexandre Rademaker}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+  \frametitle{Linguagem}
+
+Símbolos lógicos:
+\begin{itemize}
+ \item ``('', ``)'', $\to$, $\neg$, $\land$, $\lor$.
+ \item Variáveis
+ \item Símbolo de igualdade
+\end{itemize}
+
+Parâmetros:
+\begin{itemize}
+ \item Símbolos quantificadores: $\forall$ e $\exists$
+ \item Símbolos predicativos de aridade $n$. Exemplo: $pai^2$.
+ \item Símbolos de constantes (aridade zero). Exemplo: $z^0$
+ \item Símbolos de funções de aridade $n$. Exemplo: $+^2$.
+\end{itemize}
+\end{frame} 
+
+\begin{frame}
+  \frametitle{Exemplos}
+
+Linguagem dos conjutos:
+\[
+L = \langle \in^2, =^2, \emptyset \rangle
+\]
+
+Linguagem da teoria elementar dos números:
+\[
+L = \langle 0^0, <^2, S^1, +^2, \times^2, E^2 \rangle
+\]
+
+Pura predicativa:
+\[
+L = \langle A^n_1, A^m_2,\ldots, a_1, a_2,\ldots \rangle 
+\]
+\end{frame}
+
+\begin{frame}
+ \frametitle{Formulas}
+
+\begin{itemize}
+\item<1-> Uma expressão é qualquer sequência de símbolos.
+\item<2-> Expressões interessantes: \textbf{termos} e \textbf{fórmulas
+    bem formadas} (wff).
+\item<3-> Termos são entendidos como os nomes e pronomes da linguagem, dão nomes à
+  objetos. 
+\item<4-> Fórmulas atômicas não têm quantificadores nem conectivos.
+\item<5-> Fórmulas são afirmações sobre objetos.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+ \frametitle{Termos}
+
+ Podem ser construídos a partir de \textbf{constantes} e
+ \textbf{variáveis} sob os quais são aplicados um ou mais símbolos
+ funcionais.
+\[
+\begin{array}{l}
+ +(v_1, S(0)) \\ \\
+ S(S(S(0))) \\ \\
+ +(E(v_1,S(S(0))),E(v_2,S(S(0)))) \\
+\end{array}
+\]
+\end{frame}
+
+
+\begin{frame}
+  \setlength{\parskip}{10pt}
+  \frametitle{Fórmulas}
+
+Fórmulas atômicas tem função similar aos símbolos sentênciais na
+Lógica Proposicional. Tem a forma:
+\[
+P(t_1,\ldots,t_n)
+\]
+onde $P$ é um símbolo predicativo de aridade $n$ e $t_1,\ldots,t_n$
+são termos.
+
+Por exemplo, $v_1 = v_2$ (ou $=(v_1,v_2)$) são
+fórmulas. Ou ainda, $\in(v_5,v_3)$ na linguagem dos conjuntos.
+
+Se $\alpha$ e $\beta$ são fórmulas atômicas, então são WFF:
+$\alpha\land\beta$, $\alpha\lor\beta$, $\neg\alpha$, $\alpha\to\beta$,
+$\forall v_i\alpha$ e $\exists v_i\alpha$.
+
+\begin{itemize}
+\item Não é WFF: $\neg v_3$ ou $v_1 \to v_2$
+\item É WFF: $\forall v_1 ((\neg\forall v_3 (\neg (v_3 \in v_1))) \to
+  (v_1 \in v4))$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \setlength{\parskip}{10pt}
+  \frametitle{Variáveis}
+
+\[
+\forall v_2 (v_2 \in v_1) \qquad \exists v_1 \forall v_2 v_2 \in v_1
+\]
+
+A segunda, formaliza a frase ``existe um conjunto que todo conjunto é
+membro dele''.  A primeira, ``todo conjunto é membro de $\ldots$''.
+
+Seja $x$ uma variável, dizemos que $x$ é livre em $\alpha$ se:
+\begin{itemize}
+\item Se $\alpha$ é atômica, $x$ é livre em $\alpha$ se $x$ é um símbolo em $\alpha$.
+\item $x$ é livre em $\neg\alpha$ se é livre em $\alpha$.
+\item $x$ é livre em $\alpha\to\beta$  se é livre em $\alpha$ e livre em $\beta$.
+\item $x$ é livre em $\forall v_i\alpha$ se é livre em $\alpha$ e $x \neq v_i$.
+\end{itemize}
+
+Sentenças? Fórmulas sem variáveis livres!
+\end{frame}
+
+
+\begin{frame}
+  \setlength{\parskip}{10pt}
+  \frametitle{Estruturas}
+
+Nos dizem:
+\begin{itemize}
+\item A qual coleção de coisas os quantificadores $\forall$ e $\exists$ referem-se.
+\item O que os símbolos de predicados e funções denotam.
+\end{itemize}
+
+Formalmente, uma estrutura $\mathfrak{A}$ para uma linguagem FOL associa:
+\begin{itemize}
+\item Ao quantificador $\forall$ um conjunto
+  não vazio $|\mathfrak{A}|$ denominado \textbf{universo} ou
+  \textbf{domínio.}
+\item A cada símbolo predicativo $P$ de aridade
+  $n$, uma relação de aridade $n$, $P^{\mathfrak{A}} \subseteq |\mathfrak{A}|^n$.
+\item A cada símbolo funcional $f$ de aridade
+  $n$, uma função $f^{\mathfrak{A}} : |\mathfrak{A}|^n \to |\mathfrak{A}|$.
+\item A cada símbolo constante $c$, um membro $c^{\mathfrak{A}} \in |\mathfrak{A}|$. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Estruturas}
+\begin{overprint}
+
+\onslide<1>
+\setlength{\parskip}{10pt}
+
+Seja a linguagem dos conjuntos $L = \langle \in^2 \rangle$. Podemos
+considerar a estrutura $\mathfrak{A}$ que:
+
+\begin{itemize}
+\item $|\mathfrak{A}| =$ o conjunto dos números naturais.
+\item $\in^{\mathfrak{A}} =$ o conjunto dos pares $(m,n)$ tal que $m < n$.
+\end{itemize}
+
+Como a estrutura $\mathfrak{A}$ nos permite interpretar (ler) a sentença:
+
+\[
+\exists x\forall y \neg(y \in x)
+\]
+
+\onslide<2>
+\setlength{\parskip}{10pt}
+
+Seja a linguagem $L = \langle \in^2 \rangle$ (mesma) e o parâmetro
+$\forall$. Considere a estrutura finita $\mathfrak{B}$ com universo
+$|\mathfrak{B}| = \{ a,b,c,d \}$. Suponha a relação binária
+\[
+E^{\mathfrak{B}} = \{ (a,b), (b,a), (b,c), (c,c) \}
+\]
+que pode ser desejada como um \textbf{grafo}
+
+\begin{center}
+% \begin{tikzpicture} 
+% \matrix(m)[matrix of math nodes, row sep=3em, column sep=2.8em, text height=1.5ex, text depth=0.25ex] 
+% {a & b & c & d \\}; 
+% \path[->] (m-1-1) edge [bend left] (m-1-2)
+%           (m-1-2) edge (m-1-3) 
+%           (m-1-3) edge [loop below] (m-1-3);
+% \path[->] (m-1-2) edge [bend left] (m-1-1);
+% \end{tikzpicture}
+\includegraphics[width=.5\textwidth]{fol-img.pdf}
+\end{center}
+
+A sentença $\exists x \forall y \neg y E x$ na estrutura
+$\mathfrak{B}$ pode ser interpretada como? É verdadeira?
+\end{overprint}
+\end{frame}    
+
+\begin{frame}
+  \frametitle{Semântica}
+
+\begin{overprint}
+\setlength{\parskip}{10pt}
+
+\onslide<1>
+
+Se $\sigma$ é uma sentença. Como dizer que ``$\sigma$ é verdade em
+$\mathfrak{A}$''? Sem a necessidade de traduzir $\sigma$ para
+português?
+\[
+\models_{\mathfrak{A}} \sigma
+\]
+
+Para uma WFF qualquer, precisamos de:
+\[
+s : V \to |\mathfrak{A}|
+\]
+Para então, informalmente definir ``$\mathfrak{A}$ satisfaz $\sigma$ com $s$'' representado por:
+\[
+\models_{\mathfrak{A}} \sigma [s]
+\]
+se e somente se da tradução de $\sigma$ determinada por
+$\mathfrak{A}$, onde a variável $x$ é traduzida por $s(x)$ se $x$ é
+livre, é verdade.
+
+\onslide<2>
+\setlength{\parskip}{10pt}
+
+Formalmente, precisamos definir a interpretação de termos e fórmulas
+por uma estrutura...
+
+\end{overprint}
+\end{frame}
+
+\begin{frame} 
+  \setlength{\parskip}{10pt}
+  \frametitle{Interpretação de termos}
+
+Definimos a função:
+\[
+\overline{s} : T \to |\mathfrak{A}|
+\]
+que mapea termos para elementos do universo de $\mathfrak{A}$. Como:
+
+\begin{enumerate}
+\item Para cada variável $x$, $\overline{s}(x) = s(x)$.
+\item Para cada constante $c$, $\overline{s}(c) = c^{\mathfrak{A}}$.
+\item Se $t_1,\ldots,t_n$ são termos e $f$ é uma fução, então
+\[
+\overline{s}(f(t_1,\ldots,t_n)) = f^{\mathfrak{A}}(\overline{s}(t_1),\ldots,\overline{s}(t_n))
+\]
+\end{enumerate}
+
+$\overline{s}$ depende de $\mathfrak{A}$ e $s$. Notação alternativa para $\overline{s}(t)$ poderia ser $t^{\mathfrak{A}} [s]$.
+\end{frame}
+
+
+\begin{frame} 
+  \frametitle{Interpretação de fórmulas}
+
+\begin{overprint}
+
+\onslide<1>
+\setlength{\parskip}{10pt}
+
+\textbf{Fórmulas atômicas}. Definimos explicitamente, dois casos:
+
+\begin{enumerate}
+\item Igualdade onde $=$ significa $=$, não é um parâmetro aberto à
+  interpretações.
+\[
+\models_{\mathfrak{A}} t_1 = t_2\ [s] \ \text{ sse } \ \overline{s}(t_1) = \overline{s}(t_2)
+\]
+\item Para um predicado $n$-ário $P$:
+\[
+\models_{\mathfrak{A}} P(t_1,\ldots,t_n)\ [s]\ \text{ sse } \ \langle \overline{s}(t_1),\ldots,\overline{s}(t_n) \rangle \in P^{\mathfrak{A}}
+\]
+\end{enumerate}
+
+\onslide<2>
+\setlength{\parskip}{10pt}
+
+\textbf{Outras WFF}. Definimos \emph{recursivamente}:
+
+\begin{enumerate}
+\item $\models_{\mathfrak{A}} \neg\phi\ [s]$ sse $\not\models_{\mathfrak{A}} \phi\ [s]$
+\item $\models_{\mathfrak{A}} \phi \to \psi\ [s]$ sse ou
+  $\not\models_{\mathfrak{A}} \phi\ [s]$ ou $\models_{\mathfrak{A}}
+  \psi\ [s]$ ou ambos.
+\item $\models_{\mathfrak{A}} \phi \land \psi\ [s]$ sse 
+  $\models_{\mathfrak{A}} \phi\ [s]$ e $\models_{\mathfrak{A}} \psi\ [s]$.
+\item $\models_{\mathfrak{A}} \phi \lor \psi\ [s]$ sse 
+  $\models_{\mathfrak{A}} \phi\ [s]$ ou $\models_{\mathfrak{A}} \psi\ [s]$.
+\item $\models_{\mathfrak{A}} \forall x \psi\ [s]$ sse para todo $d\in
+  |\mathfrak{A}|$, temos $\models_{\mathfrak{A}} \psi\ [s(x|d)]$.
+\end{enumerate}
+
+Onde $s(x|d)$ é a função $s$ com uma diferença, para a variável $x$, ela retorna $d$. 
+\[
+s(x|d)(y) = \left\{ \begin{array}{ll}
+      s(y) & \text{se } y \neq x \\
+      d    & \text{se } y = x \\
+    \end{array} \right.
+\]
+\end{overprint}
+\end{frame}
+
+\end{document}
+
