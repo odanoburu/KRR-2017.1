@@ -52,11 +52,11 @@ predicates with arity 0, such as, $P \land (Q \lor S)$.
 
 Abbreviations:
 
-1. $(\alpha \to \beta)$  for $(\neg alpha \lor \beta)$
+1. $(\alpha \to \beta)$  for $(\neg \alpha \lor \beta)$
 2. $(\alpha \equiv \beta)$ for $(\alpha \to beta) \land (\beta \to \alpha)$.
 
-Variables can be free or bound. In $\forall y P(x) \land \exits x
-(P(y) \lor Q(x))$, the first $x$ is free and the final two are bound.
+Variables can be free or bound. In $\forall y . (P(x) \land \exists x .
+(P(y) \lor Q(x)))$, the first $x$ is free and the final two are bound.
 
 A sentence in FOL is a formula without free variables.
 
@@ -136,3 +136,16 @@ of term $t$ is:
 \]
 where $\mathcal{F} = I(f)$ and $d_i = [t_1]_{I,\mu}$.
 
+** Satisfaction and Models
+
+\[
+I, \mu \models \alpha
+\]
+
+* Pragmatics
+
+- How to give an interpretation? Maybe involving infinite set of
+  objects?
+- Logical consequence. $S \models \alpha$ iff for every I if $I
+  \models S$ (every formula in S), then $I \models \alpha$.
+- unsatisfiable, valid etc.
