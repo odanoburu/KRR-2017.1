@@ -350,5 +350,83 @@ s(x|d)(y) = \left\{ \begin{array}{ll}
 \end{overprint}
 \end{frame}
 
+
+\begin{frame}{Examples}
+  \begin{itemize}
+  \item Dado um particular grafo, como uma interpretação, verificar se
+    uma fórmula é válida, verdadeira etc.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Pragmatics}
+  \begin{itemize}
+  \item Em geral, não lidamos diretamente com a interpretação, mas com
+    \emph{teorias} que limitem as interpretações que estamos
+    interessados.
+
+  \item Seja $\alpha$ e $\beta$ duas sentenças quaisquer e $\gamma$ a
+    setença $\neg(\beta \land \neg\alpha)$. Suponha $\mathcal{I}$ uma
+    interpretação que torne $\alpha$ verdadeira, em $\mathcal{I}$ a
+    fórmula $\gamma$ também será verdadeira, por que?
+
+  \item Não precisamos para isso entender nenhum dos símbolos não
+    lógicos de $\alpha$ ou $\gamma$.
+
+  \item Dizemos que $\alpha \models \gamma$ ($\gamma$ é consequência
+    lógica de $\alpha$).
+
+  \item As letras $\alpha$, $\gamma$ e $\beta$ são 'esquemas' de
+    fórmulas.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Consequência Lógica}
+
+  $S \models \alpha$ onde S é um conjunto de sentenças. S
+  \emph{logically entails} $\alpha$. Se e somente se (sss)\vfill
+
+  para toda interpretação $\mathcal{I}$ se $\mathcal{I} \models S$
+  então $\mathcal{I} \models \alpha$. Em outras palavras, todo modelo
+  de S satisfaz $\alpha$.\vfill
+
+  De outra forma, não existe interpretação $\mathcal{I}$ tal que
+  $\mathcal{I} \models S \cup \{\neg\alpha\}$. Dizemos que
+  $S \cup \{\neg\alpha\}$ é insatisfatível (\emph{unsatisfiable})
+  neste caso.\vfill
+
+  \emph{Valid} é um caso especial de \emph{entailment}: Uma sentença é
+  \emph{válida} quando $\models\alpha$, ou seja, é consequência lógica
+  de um conjunto vazio. Neste caso, para toda interpretação
+  $\mathcal{I}$, temos ${\cal I}\models\alpha$. Ou $\neg\alpha$ é
+  unsat.\vfill
+
+  \emph{Entailment} se reduz para \emph{valid}: if
+  $S = \{ \alpha_1,\ldots,\alpha_n\}$ então $S\models\alpha$ sss a
+  sentença $s_1\land\ldots\land\alpha_n\to\alpha$ é \emph{válida}.
+\end{frame}
+
+\begin{frame}{Why we care}
+
+  What logical entailments gives to us?\vfill
+
+  We want to conclude $Mammal(fido)$ from $Dog(fido)$. But this is not
+  logical entailments. So?\vfill
+
+  If we add $\forall x.Dog(x) \to Mammal(x)$ in our KB, what changed?\vfill
+
+  Sentenças filtram as interpretações indesejadas. Queremos a verdade
+  para uma desejada interpretação.\vfill
+
+  Mas não é sempre trivial ir do conhecimento explícito para o
+  implícito.
+  
+\end{frame}
+
 \end{document}
 
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
