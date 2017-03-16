@@ -54,9 +54,9 @@
 (assert '(forall (?x)
 	  (implies (Adult ?x) (or (Man ?x) (Woman ?x)))))
 
-;; Implicitt facts
+;; Implicit facts
 
-(prove '(exits (?x) (and (Company ?x) (Loves (ceoOf ?x) jane))))
+(prove '(exists (?x) (and (Company ?x) (Loves (ceoOf ?x) jane))))
 
 
 (prove '(implies
