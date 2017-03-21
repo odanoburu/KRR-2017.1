@@ -1,10 +1,11 @@
 
 KRR Course at FGV
 
-
 * Links
 
 - https://en.wikipedia.org/wiki/Tarski%27s_World. Acessar [[https://courses.cs.washington.edu/courses/cse590d/03sp/tarski/tarski.html][aqui]] e
   baixar o arquivo =tarski.jar= e executar com =java -jar tarski.jar=.
 
+- E Prover :: http://wwwlehre.dhbw-stuttgart.de/~sschulz/E/E.html
 
+- SNARK
