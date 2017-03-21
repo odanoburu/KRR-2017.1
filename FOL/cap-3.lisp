@@ -1,3 +1,8 @@
+;; SBCL (lisp)
+;; Emacs (editor de texto)
+;; quicklisp (gerenciador de pacotes Lisp)
+;; pacotes: slime, snark
+
 ;; This is an experiment using SNARK Prover
 ;; http://www.ai.sri.com/snark/tutorial/tutorial.html#htoc11
 
