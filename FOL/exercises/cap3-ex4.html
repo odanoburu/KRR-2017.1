@@ -11827,45 +11827,9 @@ Go-left: which holds if the direction to get to Chicoutimi is to go left.
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>A1</strong>: $ (Truth\_teller(henri) \wedge \neg Truth\_teller(pierre)) \vee ( \neg Truth\_teller(henri) \wedge Truth\_teller(pierre))$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>A2</strong>: $\forall x. \forall q. Answer\_yes(x,q) \equiv [Truth\_teller(x) \wedge True(q)] \vee [\neg Truth\_teller(x) \wedge \neg True(q)]$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>A3</strong>: $\forall x. Answer\_yes(x, gauche) \wedge True(gauche) \equiv Go\_left $</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>A3</strong>: $ True(gauche) \equiv Go\_left $</p>
 <p><strong>A4</strong>: $\forall x. \forall q. True(dit\_oui(x,q)) \equiv Answer\_yes(x,q)$</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>A5</strong>: $ \forall x. \forall q. True(dit\_non(x,q)) \equiv \neg Answer\_yes(x, q)$</p>
 
 </div>
@@ -11906,12 +11870,17 @@ $$ ~t = dit\_non(pierre, gauche) $$
 <ul>
 <li><p>suppose $ Go\_left \wedge Truth\_teller(pierre) $ holds. then,</p>
 <ul>
-<li><p>$ Go\_left \wedge Truth\_teller(pierre) \implies Answer\_yes(pierre, gauche) $</p>
+<li><p>$ Go\_left \implies True(gauche)$, from <strong>A3</strong>.</p>
+</li>
+<li><p>$ True(gauche) \wedge Truth\_teller(pierre) \implies Answer\_yes(pierre, gauche) $, from <strong>A2</strong>.</p>
 </li>
 <li><p>$ Truth\_teller(pierre) \implies \neg Truth\_teller(henri) $, from <strong>A1</strong>.</p>
 </li>
-<li><p>$ \neg Truth\_teller(henri) \wedge Answer\_yes(pierre, gauche) \implies Answer\_yes(henri, dit\_non(pierre, gauche))) \equiv Answer\_yes(henri, t)$</p>
-<p>so $ Go\_left \wedge Truth\_teller(pierre) \implies Answer\_yes(henri, t) $.</p>
+<li><p>$ Answer\_yes(pierre, gauche) \implies \neg True(dit\_non(pierre, gauche)) $, from <strong>A5</strong>.</p>
+</li>
+<li><p>$ \neg Truth\_teller(henri) \wedge \neg True(dit\_non(pierre, gauche)) \implies Answer\_yes(henri, dit\_non(pierre, gauche))) $, from <strong>A2</strong>.</p>
+<p>but $ Answer\_yes(henri, dit\_non(pierre, gauche))) \equiv Answer\_yes(henri, t) $, so:</p>
+<p><strong>T1</strong>: $\ Go\_left \wedge Truth\_teller(pierre) \implies Answer\_yes(henri, t) $</p>
 </li>
 </ul>
 </li>
@@ -11928,12 +11897,17 @@ $$ ~t = dit\_non(pierre, gauche) $$
 <ul>
 <li><p>suppose $ \neg Go\_left \wedge Truth\_teller(pierre) $ holds. then,</p>
 <ul>
-<li><p>$ \neg Go\_left \wedge Truth\_teller(pierre) \implies \neg Answer\_yes(pierre, gauche) $</p>
+<li><p>$ \neg Go\_left \implies \neg True(gauche) $, from <strong>A3</strong>.</p>
+</li>
+<li><p>$ \neg True(gauche) \wedge Truth\_teller(pierre) \implies \neg Answer\_yes(pierre, gauche) $, from <strong>A2</strong>.</p>
 </li>
 <li><p>$ Truth\_teller(pierre) \implies \neg Truth\_teller(henri) $, from <strong>A1</strong>.</p>
 </li>
-<li><p>$ \neg Truth\_teller(henri) \wedge \neg Answer\_yes(pierre, gauche) \implies \neg Answer\_yes(henri, dit\_non(pierre, gauche))) \equiv \neg Answer\_yes(henri, t)$</p>
-<p>so $ \neg Go\_left \wedge Truth\_teller(pierre) \implies \neg Answer\_yes(henri, t) $.</p>
+<li><p>$ \neg Answer\_yes(pierre, gauche) \implies True(dit\_non(pierre, gauche)) $, from <strong>A5</strong>.</p>
+</li>
+<li><p>$ \neg Truth\_teller(henri) \wedge True(dit\_non(pierre, gauche)) \implies \neg Answer\_yes(henri, dit\_non(pierre, gauche))) $, from <strong>A2</strong>.</p>
+<p>but $\neg Answer\_yes(henri, dit\_non(pierre, gauche))) \equiv \neg Answer\_yes(henri, t)$, so:</p>
+<p><strong>T2</strong>: $ \neg Go\_left \wedge Truth\_teller(pierre) \implies \neg Answer\_yes(henri, t) $</p>
 </li>
 </ul>
 </li>
@@ -11952,10 +11926,15 @@ $$ ~t = dit\_non(pierre, gauche) $$
 <ul>
 <li><p>$ Truth\_teller(henri) \implies \neg Truth\_teller(pierre) $, from <strong>A1</strong>.</p>
 </li>
-<li><p>$ Go\_left \wedge \neg Truth\_teller(pierre) \implies \neg Answer\_yes(pierre, gauche) $</p>
+<li><p>$ Go\_left \implies True(gauche) $, from <strong>A3</strong>.</p>
 </li>
-<li><p>$ Truth\_teller(henri) \wedge \neg Answer\_yes(pierre, gauche) \implies Answer\_yes(henri, dit\_non(pierre, gauche)) \equiv Answer\_yes(henri, t)$</p>
-<p>so $ Go\_left \wedge Truth\_teller(henri) \implies Answer\_yes(henri, t) $.</p>
+<li><p>$ True(gauche) \wedge \neg Truth\_teller(pierre) \implies \neg Answer\_yes(pierre, gauche) $, from <strong>A2</strong>.</p>
+</li>
+<li><p>$ \neg Answer\_yes(pierre, gauche) \implies True(dit\_non(pierre, gauche)) $, from <strong>A5</strong>.</p>
+</li>
+<li><p>$ Truth\_teller(henri) \wedge True(dit\_non(pierre, gauche)) \implies Answer\_yes(henri, dit\_non(pierre, gauche))  $, from <strong>A2</strong>.</p>
+<p>but $ Answer\_yes(henri, dit\_non(pierre, gauche)) \equiv Answer\_yes(henri, t) $, so:</p>
+<p><strong>T3</strong>: $ Go\_left \wedge Truth\_teller(henri) \implies Answer\_yes(henri, t) $</p>
 </li>
 </ul>
 </li>
@@ -11974,10 +11953,15 @@ $$ ~t = dit\_non(pierre, gauche) $$
 <ul>
 <li><p>$ Truth\_teller(henri) \implies \neg Truth\_teller(pierre) $, from <strong>A1</strong>.</p>
 </li>
-<li><p>$ \neg Go\_left \wedge \neg Truth\_teller(pierre) \implies Answer\_yes(pierre, gauche) $</p>
+<li><p>$ \neg Go\_left \implies \neg True(gauche) $, from <strong>A3</strong>.</p>
 </li>
-<li><p>$ Truth\_teller(henri) \wedge Answer\_yes(pierre, gauche) \implies \neg Answer\_yes(henri, dit\_non(pierre, gauche)) \equiv \neg Answer\_yes(henri, t)$</p>
-<p>so $ \neg Go\_left \wedge Truth\_teller(henri) \implies \neg Answer\_yes(henri, t) $.</p>
+<li><p>$ \neg True(gauche) \wedge \neg Truth\_teller(pierre) \implies Answer\_yes(pierre, gauche) $, from <strong>A2</strong>.</p>
+</li>
+<li><p>$ Answer\_yes(pierre, gauche) \implies \neg True(dit\_non(x,q))$, from <strong>A5</strong>.</p>
+</li>
+<li><p>$ Truth\_teller(henri) \wedge \neg True(dit\_non(x,q)) \implies \neg Answer\_yes(henri, dit\_non(pierre, gauche)) $, from <strong>A2</strong>.</p>
+<p>but $ \neg Answer\_yes(henri, dit\_non(pierre, gauche)) \equiv \neg Answer\_yes(henri, t)$, so:</p>
+<p><strong>T4</strong>: $ \neg Go\_left \wedge Truth\_teller(henri) \implies \neg Answer\_yes(henri, t) $</p>
 </li>
 </ul>
 </li>
@@ -11991,8 +11975,8 @@ $$ ~t = dit\_non(pierre, gauche) $$
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>therefore, $$ KB \models [Answer\_yes(henri, t) \equiv Go\_left \ \square $$</p>
-
+<p>therefore, from <strong>T1-4</strong>:</p>
+$$ KB \models [Answer\_yes(henri, t) \equiv Go\_left \ \square $$
 </div>
 </div>
 </div>

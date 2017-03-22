@@ -26,14 +26,13 @@ fof(only_one_truth_teller, axiom, (
     | (truth_teller(pierre) & ~ truth_teller(henri) ) )).
 %
 fof(answer_yes_conditions, axiom, (
-    ! [X, Q] :
+    ! [X, Q] : (
         ( ( answer_yes(X,Q) ) <=> 
-        ( truth_teller(X) & true(Q) ) | ( ~ truth_teller(X) & ~ true(Q) )  ))).
+        ( ( truth_teller(X) & true(Q) ) | ( ~ truth_teller(X) & ~ true(Q) )  ))))).
 
 fof(go_left_or_not, axiom, (
-    ! [X] :
-        (answer_yes(X, gauche) & true(gauche) )
-        <=> go_left ) ).
+    ( (true(gauche) )
+        <=> ( go_left ) ) )).
 
 fof(dit_oui_condition, axiom, (
     ! [X, Q] :
