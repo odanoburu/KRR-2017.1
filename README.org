@@ -7,5 +7,6 @@ KRR Course at FGV
   baixar o arquivo =tarski.jar= e executar com =java -jar tarski.jar=.
 
 - E Prover :: http://wwwlehre.dhbw-stuttgart.de/~sschulz/E/E.html
+    - pode ser testado online [[http://www.tptp.org/cgi-bin/SystemOnTPTP][aqui]], com sintaxe [[http://www.cs.miami.edu/~tptp/][TPTP]].
 
 - SNARK
