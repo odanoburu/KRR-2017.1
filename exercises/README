@@ -1,0 +1,6 @@
+
+
+eprover --auto --tptp3-format cap3-ex4.tptp
+
+eprover --auto --proof-graph=2 --tptp3-format cap3-ex4.tptp > out.dot
+

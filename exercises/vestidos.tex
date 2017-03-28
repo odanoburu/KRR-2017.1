@@ -1,0 +1,117 @@
+\documentclass[answers]{exam}
+\usepackage[utf8x]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage[a4paper, rmargin=2cm, lmargin=2cm, tmargin=2cm, bmargin=2cm]{geometry}
+\usepackage{anttor}
+\usepackage{fourier}
+\usepackage{amssymb}
+
+\begin{document}
+
+\title{Problema dos Vestidos}
+\author{Alexandre Rademaker}
+\maketitle
+
+Escreva senten\c{c}as em l\'ogica proposicional que
+ descrevam as condi\c{c}\~oes do problemas abaixo, depois
+ mostre que a solu\c{c}\~ao do  problema de fato decorre
+ logicamente das senten\c{c}as (f\'ormulas em l\'ogica proposicional).
+
+ Tr\^es irm\~as - Ana, Maria e Cl\'audia - foram a uma festa
+ com vestidos de cores diferentes.  Uma vestia azul, a outra branco e
+ a terceira preto. Chegando \`a festa, o anfitri\~ao perguntou quem
+ era cada uma delas.  As respostas foram:
+\begin{itemize}
+ \item A de azul respondeu: ``Ana \'e a que est\'a de branco.''
+ \item A de branco falou: ``Eu sou Maria.''
+ \item A de preto disse:  ``Cl\'audia \'e quem est\'a de branco.''
+\end{itemize}
+  O anfitri\~ao foi capaz de identificar corretamente quem era cada pessoa considerando que:
+\begin{itemize}
+ \item Ana sempre diz a verdade.
+ \item Maria \`as vezes diz a verdade.
+ \item Cl\'audia nunca diz a verdade.
+\end{itemize}
+Determine a cor do vestido de cada irm\~a.
+
+  Vamos utilizar $AA, AB$ e $AP$ para representar ``Ana veste azul'',
+  ``Ana veste branco'' e ``Ana veste preto'' respectivamente; $CA, CB$
+  e $CP$ para representar ``Claudia veste azul'', ``Claudia veste
+  branco'' e ``Claudia veste preto'' respectivamente e $MA, MB$ e $MP$
+  para representar ``Maria veste azul'', ``Maria veste branco'' e
+  ``Maria veste preto'' respectivamente.
+
+  Como cada uma das irm\~as veste algum vestido, temos:
+$(AA\lor AB\lor AP)\land(CA\lor CB\lor CP)\land(MA\lor MB\lor MP)$.
+
+Como cada irm\~a veste \textit{apenas} um vestido, temos:
+$(\neg (AA\land AB)\land \neg (AB\land AP) \land \neg (AA\land AP)) \land
+(\neg (CA\land CB)\land \neg (CB\land CP) \land \neg (CA\land CP)) \land
+(\neg (MA\land MB)\land \neg (MB\land MP) \land \neg (MA\land
+MP))$.
+
+Como cada vestido \'e usado por alguma das irm\~as, temos:
+\[
+(AA\lor CA \lor MA)\land(AB\lor CB \lor MB)\land(AP\lor CP \lor MP)
+\].
+
+Como cada vestido \'e usado por \textit{apenas} uma das irm\~as, temos:
+$(\neg (AA\land CA)\land \neg (AA\land MA) \land \neg (CA\land MA)) \land
+(\neg (AB\land CB)\land \neg (AB\land MB) \land \neg (CB\land MB)) \land
+(\neg (AP\land CP)\land \neg (AP\land MP) \land \neg (CP\land
+MP))$. 
+
+Essas senten\c{c}as podem ser separadas em f\'ormulas menores
+considerando as componentes das conjun\c{c}\~oes.  Por exemplo,
+podemos ver $(AA\lor AB\lor AP)\land(CA\lor CB\lor CP)\land(MA\lor
+MB\lor MP)$ como o conjunto das senten\c{c}as $(AA\lor AB\lor AP),
+(CA\lor CB\lor CP), (MA\lor MB\lor MP)$.
+
+Ressaltamos que as senten\c{c}as simbolizadas acima apenas enunciam as
+proposi\c{c}\~oes sobre todas as possibilidades de cada irm\~a usar
+uma \'unica cor e cada cor ser usada por apenas uma irm\~a.  Vamos
+agora analisar as frases ditas por cada irm\~a.
+
+Se Ana \'e a que veste azul, ent\~ao Ana \'e a que est\'a de branco
+(Ana sempre diz a verdade). Simbolizando: $AA\rightarrow AB$. 
+
+Se Claudia for a que veste azul, ent\~ao Ana n\~ao est\'a de branco:
+$CA\rightarrow \neg AB$. 
+
+Se Ana \'e a que veste branco, ent\~ao Ana \'e Maria, o que \'e um
+absurdo. Logo: $\neg AB$. 
+
+Claudia dizendo a segunda frase n\~ao acrescenta informa\c{c}\~ao
+alguma, pois sabemos que ela n\~ao \'e Maria.
+
+Se Ana for a que veste preto, ent\~ao Claudia \'e a que veste branco:
+$AP\rightarrow CB$. 
+
+E se Claudia for a que veste preto, ent\~ao Claudia n\~ao \'e a que
+veste branco: $CP\rightarrow \neg CB$, cuja informa\c{c}\~ao j\'a faz
+parte do nosso conjunto de premissas.  Vamos representar todas essas
+senten\c{c}as simbolizadas por $\Gamma$.  Agora basta verificarmos se
+$\Gamma\models AP$, $\Gamma\models AB$, $\Gamma\models AA$,
+$\Gamma\models CP$\ldots
+
+Note que n\~ao precisamos de todas as premissas de $\Gamma$. Por
+exemplo, para provarmos $\Gamma\models AP$, podemos usar apenas as
+senten\c{c}as $\neg AB, AA\lor AB\lor AP$ e $AA\rightarrow AB$.
+
+Prova por contradi\c{c}\~ao: Se $AP$ for falsa e as senten\c{c}as
+$\neg AB, AA\lor AB\lor AP$ e $AA\rightarrow AB$ forem verdadeiras,
+ent\~ao $AB$ \'e falsa (pois $\neg AB$ \'e verdadeira). Para que
+$AA\rightarrow AB$ seja verdadeira, $AA$ tem que ser falsa.  Para que
+$AA\lor AB\lor AP$ seja verdadeira, $AP$ precisa ser verdadeira, o que
+\'e um absurdo, pois estamos supondo $AP$ falsa.  Logo, $AP$ n\~ao
+pode ser falsa.
+
+Resposta: Ana veste preto, Claudia branco e Maria azul.
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

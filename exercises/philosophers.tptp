@@ -5,5 +5,7 @@ fof(plato,axiom,(philosopher(plato))).
 
 fof(hume,axiom,(philosopher(hume))).
 
-fof(philosphers_exist,conjecture,( ? [X] : (philosopher(X)))).
+
+% fof(philosphers_exist, question,( ? [X] : (philosopher(X)))).
+fof(philosphers_exist, conjecture, (philosopher(hume))).
 

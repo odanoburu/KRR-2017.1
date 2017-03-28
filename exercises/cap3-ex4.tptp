@@ -1,4 +1,6 @@
 
+%% TPTP => E Prover
+
 fof(only_one_truth_teller, axiom, 
     ((truth_teller(henri)  => ~ truth_teller(pierre)) &
      (truth_teller(pierre) => ~ truth_teller(henri)) &
@@ -23,9 +25,13 @@ fof(dit_non_condition, axiom,
     (! [X, Q] : (true(dit_non(X,Q)) <=> ~ answer_yes(X,Q)))
    ).
 
-fof(find_puzzle_solution,question, 
+fof(find_puzzle_solution, question, 
     (? [Q] : (answer_yes(henri,Q) <=> go_left ))
    ).
+
+%% fof(find_puzzle_solution, conjecture, 
+%%     (answer_yes(henri,gauche) <=> go_left )
+%%    ).
 
 %% fof(find_puzzle_solution,conjecture, 
 %%     ~ go_left 

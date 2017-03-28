@@ -1,4 +1,7 @@
 
+;; SNARK prover
+
+
 (assert '(and
 	  (=> (truth_teller henri) (not (truth_teller pierre)))
 	  (=> (truth_teller pierre) (not (truth_teller henri)))
@@ -25,3 +28,4 @@
 
 (prove '(iff (answer_yes henri ?Q) go_left) :answer '(ans ?Q))
 
+(prove '(iff (answer_yes henri gauche) go_left))
