@@ -1,0 +1,32 @@
+%% TPTP => E Prover
+
+fof(colors, axiom,
+    (color(blue) & color(white) & color(black))
+    ).
+
+fof(people, axiom,
+    (person(ana) & person(claudia) & person(maria))
+    ).
+
+fof(one_color_person, axiom,
+    ! [X, C, Q]: ((person(X) & person(Q) & color(C) & dresses(X, C) & dresses(Q, C)) <=> (X = Q))
+    ).
+
+fof(truth_teller_liar, axiom, 
+    ((truth_teller(ana) ) & (~ truth_teller(claudia) ))
+   ).
+
+fof(says_dresses_and_dresses, axiom,
+    ! [X, C, Q, K] : ( (person(X) & color(C) & person(Q) & color(K) & truth_teller(X) & dresses(X, C) & says_dresses(C, Q, K) ) <=> dresses(Q, K) )
+    ).
+
+fof(color_says_q_dresses_color, axiom,
+    (says_dresses(blue, ana, white) & says_dresses(white, maria, white) & says_dresses(black, claudia, white))
+    ).
+
+fof(find_puzzle_solution, question,
+    ! [X] : (
+    ? [C] : ( person(X) & color(C) & dresses(X, C) )
+            )
+   ).
+
