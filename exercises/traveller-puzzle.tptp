@@ -7,6 +7,10 @@ fof(only_one_truth_teller, axiom,
      (truth_teller(pierre) | truth_teller(henri)))
    ).
 
+fof(no_other_people, axiom,
+    ! [X]: ( (truth_teller(X) ) => ( (X = pierre) | (X = henri) ) )
+   ).
+
 fof(answer_yes_conditions, axiom, 
     (! [X, Q] : 
      (answer_yes(X,Q) <=> 

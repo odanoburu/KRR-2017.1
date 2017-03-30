@@ -4,8 +4,16 @@ fof(colors, axiom,
     (color(blue) & color(white) & color(black))
     ).
 
+fof(only_colors, axiom,
+    ! [C]: ( ( (C != blue) & (C != white) & (C != black) ) <=> ( ~color(C) ) )
+    ).
+
 fof(people, axiom,
     (person(ana) & person(claudia) & person(maria))
+    ).
+
+fof(only_people, axiom,
+    ! [X]: ( ( (X != ana) & (X != claudia) & (X != maria) ) <=> ( ~person(X) ) )
     ).
 
 fof(one_color_person, axiom,
@@ -13,20 +21,27 @@ fof(one_color_person, axiom,
     ).
 
 fof(truth_teller_liar, axiom, 
-    ((truth_teller(ana) ) & (~ truth_teller(claudia) ))
+    ((truth_teller(ana) ) & (~truth_teller(claudia) ))
    ).
 
-fof(says_dresses_and_dresses, axiom,
+fof(says_dresses_and_dresses_truth, axiom,
     ! [X, C, Q, K] : ( (person(X) & color(C) & person(Q) & color(K) & truth_teller(X) & dresses(X, C) & says_dresses(C, Q, K) ) <=> dresses(Q, K) )
+    ).
+
+fof(says_dresses_and_dresses_false, axiom,
+    ! [X, C, Q, K] : ( (person(X) & color(C) & person(Q) & color(K) & ~truth_teller(X) & dresses(X, C) & says_dresses(C, Q, K) ) <=> ~dresses(Q, K) )
     ).
 
 fof(color_says_q_dresses_color, axiom,
     (says_dresses(blue, ana, white) & says_dresses(white, maria, white) & says_dresses(black, claudia, white))
     ).
 
-fof(find_puzzle_solution, question,
-    ! [X] : (
-    ? [C] : ( person(X) & color(C) & dresses(X, C) )
-            )
-   ).
+%%fof(find_puzzle_solution, question,
+%%    ! [X] : (
+%%    ? [C] : ( person(X) & color(C) & dresses(X, C) )
+%%            )
+%%   ).
 
+fof(dresses_blue, question,
+    ? [X] : ( person(X) & dresses(X, blue) )
+).
