@@ -20,7 +20,7 @@ fof(no_other_people, axiom,
 
 fof(answer_yes_conditions, axiom, 
     (! [X, Q] : 
-     (answer_yes(X,Q) <=> 
+     ( ( person(X) & question(Q) & answer_yes(X,Q) ) <=> 
       ((truth_teller(X) & true(Q)) | ( ~ truth_teller(X) & ~ true(Q)))))
    ).
 
@@ -29,15 +29,15 @@ fof(go_left_or_not, axiom,
    ).
 
 fof(dit_oui_condition, axiom, 
-    (! [X, Q] : (true(dit_oui(X,Q)) <=> answer_yes(X,Q)))
+    (! [X, Q] : ( ( person(X) & question(Q) & true(dit_oui(X,Q)) ) <=> answer_yes(X,Q) ) )
    ).
 
 fof(dit_non_condition, axiom, 
-    (! [X, Q] : (true(dit_non(X,Q)) <=> ~ answer_yes(X,Q)))
+    (! [X, Q] : ( ( person(X) & question(Q) & true(dit_non(X,Q)) ) <=> ~ answer_yes(X,Q) ) )
    ).
 
 fof(find_puzzle_solution, question, 
-    (? [Q] : (answer_yes(henri, Q) <=> go_left ))
+    (? [Q] : ( ( question(Q) & answer_yes(henri, Q) ) <=> go_left ) )
    ).
 
 %% fof(find_puzzle_solution, conjecture, 

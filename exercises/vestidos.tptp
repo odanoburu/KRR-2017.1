@@ -1,47 +1,69 @@
 %% TPTP => E Prover
 
 fof(colors, axiom,
-    (color(blue) & color(white) & color(black))
+    ( color(blue) & color(white) & color(black) )
     ).
 
 fof(only_colors, axiom,
     ! [C]: ( ( (C != blue) & (C != white) & (C != black) ) <=> ( ~color(C) ) )
     ).
 
+fof(no_equal_colors, axiom,
+    ( ( blue != white ) & ( blue != black ) & ( white != black ) )
+    ).
+
 fof(people, axiom,
-    (person(ana) & person(claudia) & person(maria))
+    ( person(ana) & person(claudia) & person(maria) )
     ).
 
 fof(only_people, axiom,
     ! [X]: ( ( (X != ana) & (X != claudia) & (X != maria) ) <=> ( ~person(X) ) )
     ).
 
-fof(one_color_person, axiom,
-    ! [X, C, Q]: ((person(X) & person(Q) & color(C) & dresses(X, C) & dresses(Q, C)) <=> (X = Q))
+fof(no_equal_people, axiom,
+    ( ( maria != claudia ) & ( maria != ana ) & ( ana != claudia ) )
+    ).
+
+fof(people_dress_colors, axiom,
+    ! [X, C]: ( ( dresses(X, C) ) => ( person(X) & color(C) ) )
+).  %% dresses(X, C) <=> person X dresses color C
+
+fof(people_say_people_dress_colors, axiom,
+    ! [C, Q, K]: ( ( says_dresses(C, Q, K) ) => ( person(Q) & color(C) & color(K) ) )
+).  %% says_dresses(C, Q, K) <=> person who dresses in color C says person Q dresses in color K
+
+fof(one_color_per_person, axiom,
+    ! [X, C, Q]: ( ( person(X) & person(Q) & color(C) & dresses(X, C) & dresses(Q, C) ) => (X = Q) )
     ).
 
 fof(truth_teller_liar, axiom, 
-    ((truth_teller(ana) ) & (~truth_teller(claudia) ))
+    ( ( truth_teller(ana) ) & ( liar(claudia) ) ) %% liar and not ~truth_teller because maria is neither
    ).
 
 fof(says_dresses_and_dresses_truth, axiom,
-    ! [X, C, Q, K] : ( (person(X) & color(C) & person(Q) & color(K) & truth_teller(X) & dresses(X, C) & says_dresses(C, Q, K) ) <=> dresses(Q, K) )
+    ! [X, C, Q, K] : ( (person(X) & color(C) & person(Q) & color(K) & truth_teller(X) & dresses(X, C) & says_dresses(C, Q, K) ) => dresses(Q, K) )
     ).
 
 fof(says_dresses_and_dresses_false, axiom,
-    ! [X, C, Q, K] : ( (person(X) & color(C) & person(Q) & color(K) & ~truth_teller(X) & dresses(X, C) & says_dresses(C, Q, K) ) <=> ~dresses(Q, K) )
+    ! [X, C, Q, K] : ( (person(X) & color(C) & person(Q) & color(K) & liar(X) & dresses(X, C) & says_dresses(C, Q, K) ) => ~dresses(Q, K) )
     ).
+
+fof(a_dress_to_each, axiom,
+    ! [X]: ( ? [C]: ( person(X) & color(C) & dresses(X, C) ) )
+).
 
 fof(color_says_q_dresses_color, axiom,
     (says_dresses(blue, ana, white) & says_dresses(white, maria, white) & says_dresses(black, claudia, white))
     ).
 
-%%fof(find_puzzle_solution, question,
-%%    ! [X] : (
-%%    ? [C] : ( person(X) & color(C) & dresses(X, C) )
-%%            )
-%%   ).
-
 fof(dresses_blue, question,
-    ? [X] : ( person(X) & dresses(X, blue) )
+    ? [X] : ( dresses(X, blue) )
 ).
+
+%fof(dresses_black, question,
+%    ? [X] : ( dresses(X, black) )
+%).
+
+%fof(dresses_white, question,
+%    ? [X] : ( dresses(X, white) )
+%).
