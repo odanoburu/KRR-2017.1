@@ -2,13 +2,20 @@
 %% TPTP => E Prover
 
 fof(only_one_truth_teller, axiom, 
-    ((truth_teller(henri)  => ~ truth_teller(pierre)) &
-     (truth_teller(pierre) => ~ truth_teller(henri)) &
-     (truth_teller(pierre) | truth_teller(henri)))
+    ( ( ~truth_teller(henri) | ~truth_teller(pierre) ) &
+     ( truth_teller(pierre) | truth_teller(henri) ) )
    ).
 
+fof(people, axiom,
+    ( person(henri) & person(pierre))
+).
+
+fof(questions, axiom,
+    ! [X, Q]: ( question(gauche) & ( ( person(X) & question(Q) ) => ( question(dit_oui(X, Q)) ) ) & ( ( person(X) & question(Q) ) => ( question(dit_non(X, Q)) ) ) )
+    ).
+
 fof(no_other_people, axiom,
-    ! [X]: ( (truth_teller(X) ) => ( (X = pierre) | (X = henri) ) )
+    ! [X]: ( (truth_teller(X) | ~truth_teller(X) ) => ( person(X) ) )
    ).
 
 fof(answer_yes_conditions, axiom, 
@@ -30,7 +37,7 @@ fof(dit_non_condition, axiom,
    ).
 
 fof(find_puzzle_solution, question, 
-    (? [Q] : (answer_yes(henri,Q) <=> go_left ))
+    (? [Q] : (answer_yes(henri, Q) <=> go_left ))
    ).
 
 %% fof(find_puzzle_solution, conjecture, 
