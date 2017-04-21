@@ -2,13 +2,13 @@
 Para executar o eprover (http://www.eprover.org):
 
 #+BEGIN_SRC bash
-eprover --auto --tptp3-format cap3-ex4.tptp
+eprover --auto --tptp3-format traveller-puzzle.tptp
 #+END_SRC
 
 Para produzir um grafo com a prova do problema:
 
 #+BEGIN_SRC bash
-eprover --auto --proof-graph=2 --tptp3-format cap3-ex4.tptp > out.dot
+eprover --auto --proof-graph=2 --tptp3-format traveller-puzzle.tptp > out.dot
 dot -Tpdf out.dot > out.pdf
 #+END_SRC
 

@@ -1,0 +1,50 @@
+
+%% TPTP => E Prover
+
+fof(only_one_truth_teller, axiom, 
+    ( ( ~truth_teller(henri) | ~truth_teller(pierre) ) &
+     ( truth_teller(pierre) | truth_teller(henri) ) )
+   ).
+
+fof(people, axiom,
+    ( person(henri) & person(pierre))
+).
+
+fof(questions, axiom,
+    ! [X, Q]: ( question(gauche) & ( ( person(X) & question(Q) ) => ( question(dit_oui(X, Q)) ) ) & ( ( person(X) & question(Q) ) => ( question(dit_non(X, Q)) ) ) )
+    ).
+
+fof(no_other_people, axiom,
+    ! [X]: ( (truth_teller(X) | ~truth_teller(X) ) => ( person(X) ) )
+   ).
+
+fof(answer_yes_conditions, axiom, 
+    (! [X, Q] : 
+     ( ( person(X) & question(Q) & answer_yes(X,Q) ) <=> 
+      ((truth_teller(X) & true(Q)) | ( ~ truth_teller(X) & ~ true(Q)))))
+   ).
+
+fof(go_left_or_not, axiom, 
+    (true(gauche) <=> go_left )
+   ).
+
+fof(dit_oui_condition, axiom, 
+    (! [X, Q] : ( ( person(X) & question(Q) & true(dit_oui(X,Q)) ) <=> answer_yes(X,Q) ) )
+   ).
+
+fof(dit_non_condition, axiom, 
+    (! [X, Q] : ( ( person(X) & question(Q) & true(dit_non(X,Q)) ) <=> ~ answer_yes(X,Q) ) )
+   ).
+
+fof(find_puzzle_solution, question, 
+    (? [Q] : ( ( question(Q) & answer_yes(henri, Q) ) <=> go_left ) )
+   ).
+
+%% fof(find_puzzle_solution, conjecture, 
+%%     (answer_yes(henri,gauche) <=> go_left )
+%%    ).
+
+%% fof(find_puzzle_solution,conjecture, 
+%%     ~ go_left 
+%%    ).
+
