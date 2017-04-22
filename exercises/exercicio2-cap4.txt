@@ -1,0 +1,53 @@
+Questão 2, capitulo IV.
+
+"Tony, Mike, and John belong to the Alpine Club. Every member of
+the Alpine Club who is not a skier is a mountain climber. Mountain
+climbers do not like rain, and anyone who does not like snow is not
+a skier. Mike dislikes whatever Tony likes, and likes whatever Tony
+dislikes. Tony likes rain and snow."
+
+Formalização:
+
+-Seja APM(x) (Alpine Club Member), S(x) (skier), MC(x) (Mountain Climber),
+LR(x) (Likes Rain), LS(x) (Likes Snow) predicados para indicar se o 
+elemento x faz ou não parte do clube, é esquiador, é escalador, gosta 
+de chuva ou gosta de chuva, respectivamente.
+-Sejam T, M e J respectivamente Tom, Mike e John.
+
+Temos como KB:
+
+(1) APM(T)
+(2) APM(J)
+(3) APM(M)
+(4) ∀x((APM(x) ∧  ¬S(x)) ⊃ MC(x))
+(5) ∀x(MC(x) ⊃ ¬LR(x))
+(6) ∀x(¬LS(x) ⊃ ¬S(x))
+(7) ¬LS(M)
+(8) ¬LR(M)
+(9) LS(T)
+(10) LR(T)
+
+Transformando pra CNF e utilizando a notação do livro:
+
+(4) [¬APM(x), S(x), MC(x)]
+(5) [¬MC(x), ¬LR(x)]
+(6) [LS(x), ¬S(x)]
+
+Queremos: ∃x(MC(x) ∧ ¬S(x)), ou seja, ∀x(¬MC(x) ∨ S(x)),ou
+ seja, [¬MC(x), S(x)]
+
+Manipulando as cláusulas:
+(Utilizarei A(x) como answer extractor: [¬MC(x), S(x), A(x)])
+
+
+{[LS(x), ¬S(x)], ¬LS(M)} |= ¬S(M)
+
+{¬S(M), [¬APM(x), S(x), MC(x)]} |= [¬APM(M), MC(M)]
+
+{[¬APM(M), MC(M)], APM(M)} |= MC(M)
+
+{[¬APM(M), MC(M)], APM(M)} |= MC(M)
+
+{MC(M), [¬MC(x), S(x), A(x)]} |= [S(M), A(M)]
+
+{¬S(M), [S(M), A(M)]} |= A(M)
