@@ -1,0 +1,73 @@
+
+# Auto-Ordering is analysing problem.
+# Problem is type HUNFGFFSF11SM
+# Auto-mode selected ordering type KBO6
+# Auto-mode selected ordering precedence scheme <invfreq>
+# Auto-mode selected weight ordering scheme <invfreqrank>
+#
+# Auto-Heuristic is analysing problem.
+# Problem is type HUNFGFFSF11SM
+# Auto-Mode selected heuristic G_E___208_C18_F1_SE_CS_SP_PS_S0Y
+# and selection function SelectMaxLComplexAvoidPosPred.
+#
+# No equality, disabling AC handling.
+#
+# Initializing proof state
+#
+#cnf(i_0_1, plain, (Plus(zero,X1,X1))).
+#
+#cnf(i_0_3, negated_conjecture, ($answer(esk1_1(X1))|~Plus(Succ(Succ(zero)),Succ(Succ(Succ(zero))),X1))).
+#
+#cnf(i_0_2, plain, (Plus(Succ(X1),X2,Succ(X3))|~Plus(X1,X2,X3))).
+# Presaturation interreduction done
+#
+#cnf(i_0_3, negated_conjecture, ($answer(esk1_1(X1))|~Plus(Succ(Succ(zero)),Succ(Succ(Succ(zero))),X1))).
+#
+#cnf(i_0_1, plain, (Plus(zero,X1,X1))).
+#
+#cnf(i_0_2, plain, (Plus(Succ(X1),X2,Succ(X3))|~Plus(X1,X2,X3))).
+#
+#cnf(i_0_4, negated_conjecture, ($answer(esk1_1(Succ(X1)))|~Plus(Succ(zero),Succ(Succ(Succ(zero))),X1))).
+#
+#cnf(i_0_5, negated_conjecture, ($answer(esk1_1(Succ(Succ(X1))))|~Plus(zero,Succ(Succ(Succ(zero))),X1))).
+## SZS status Theorem
+# SZS answers Tuple [[Succ(Succ(Succ(Succ(Succ(zero)))))]|_]
+
+# Proof found!
+# Parsed axioms                        : 3
+# Removed by relevancy pruning/SinE    : 0
+# Initial clauses                      : 3
+# Removed in clause preprocessing      : 0
+# Initial clauses in saturation        : 3
+# Processed clauses                    : 9
+# ...of these trivial                  : 0
+# ...subsumed                          : 0
+# ...remaining for further processing  : 8
+# Other redundant clauses eliminated   : 0
+# Clauses deleted for lack of memory   : 0
+# Backward-subsumed                    : 0
+# Backward-rewritten                   : 0
+# Generated clauses                    : 3
+# ...of the previous two non-trivial   : 3
+# Contextual simplify-reflections      : 0
+# Paramodulations                      : 3
+# Factorizations                       : 0
+# Equation resolutions                 : 0
+# Current number of processed clauses  : 5
+#    Positive orientable unit clauses  : 1
+#    Positive unorientable unit clauses: 0
+#    Negative unit clauses             : 0
+#    Non-unit-clauses                  : 4
+# Current number of unprocessed clauses: 0
+# ...number of literals in the above   : 0
+# Current number of archived formulas  : 0
+# Current number of archived clauses   : 0
+# Clause-clause subsumption calls (NU) : 0
+# Rec. Clause-clause subsumption calls : 0
+# Non-unit clause-clause subsumptions  : 0
+# Unit Clause-clause subsumption calls : 0
+# Rewrite failures with RHS unbound    : 0
+# BW rewrite match attempts            : 0
+# BW rewrite match successes           : 0
+# Condensation attempts                : 0
+# Condensation successes               : 0

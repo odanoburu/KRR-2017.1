@@ -1,0 +1,11 @@
+fof(zero, axiom, 
+    ! [X]: ( Plus(zero, X, X) )
+).
+
+fof(sum, axiom,
+    ! [X, Y, Z]: ( Plus(X, Y, Z) => Plus(Succ(X), Y, Succ(Z)) )
+).
+
+fof(find_five, question,
+    ? [U]: ( Plus(Succ(Succ(zero)), Succ(Succ(Succ(zero))), U) )
+).
