@@ -1,0 +1,320 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  % \usetheme{default}
+  % \usetheme{Montpellier}
+  % \usetheme{Malmoe}
+  % \usetheme{PaloAlto}
+  % \usetheme{Berlin}
+  % \usetheme{Dresden}
+  % \usetheme{Darmstadt}
+  % \usetheme{Warsaw}
+  % \usetheme{Ilmenau}
+  % \usetheme{Frankfurt}
+  % \usetheme[secheader]{Madrid}
+  % \usetheme{Hannover}
+  \usetheme[secheader]{Boadilla}
+  % \usetheme{Dresden}
+  \setbeamercovered{transparent}
+}
+
+% \usepackage{proof}
+% \usepackage{bussproofs}
+% \usepackage{tabularx}
+% \usepackage{boxedminipage}
+% \usepackage{algorithmic}
+% \usepackage{algorithm}
+% \usepackage{qtree}
+\usepackage{ulem}
+\usepackage[latin1]{inputenc}
+% \usepackage{ifthen}
+\usepackage{pgf}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{matrix,arrows}
+
+\usepackage{latexsym}
+\usepackage{stmaryrd}
+\usepackage{mathrsfs}
+\usepackage{amsfonts,amssymb,amsthm,amsmath}
+
+% \newboolean{numberspec}
+% \setboolean{numberspec}{false}
+% \newcounter{specline}
+
+\title{Lógica de Primeira Ordem: resolução}
+\author{Alexandre Rademaker}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+  \frametitle{Linguagem}
+
+Símbolos lógicos:
+\begin{itemize}
+ \item ``('', ``)'', $\to$, $\neg$, $\land$, $\lor$.
+ \item Variáveis
+ \item Símbolo de igualdade
+\end{itemize}
+
+Parâmetros:
+\begin{itemize}
+ \item Símbolos quantificadores: $\forall$ e $\exists$
+ \item Símbolos predicativos de aridade $n$. Exemplo: $pai^2$.
+ \item Símbolos de constantes (aridade zero). Exemplo: $z^0$
+ \item Símbolos de funções de aridade $n$. Exemplo: $+^2$.
+\end{itemize}
+\end{frame} 
+
+
+\begin{frame}
+  \frametitle{Semântica}
+
+Se $\sigma$ é uma sentença. Como dizer que ``$\sigma$ é verdade em
+$\mathfrak{A}$''? Sem a necessidade de traduzir $\sigma$ para
+português?
+\[
+\models_{\mathfrak{A}} \sigma
+\]
+
+Para uma WFF qualquer, precisamos de:
+\[
+s : V \to |\mathfrak{A}|
+\]
+Para então, informalmente definir ``$\mathfrak{A}$ satisfaz $\sigma$ com $s$'' representado por:
+\[
+\models_{\mathfrak{A}} \sigma [s]
+\]
+se e somente se da tradução de $\sigma$ determinada por
+$\mathfrak{A}$, onde a variável $x$ é traduzida por $s(x)$ se $x$ é
+livre, é verdade.
+\end{frame}
+
+\begin{frame} 
+  \setlength{\parskip}{10pt}
+  \frametitle{Interpretação de termos}
+
+Definimos a função:
+\[
+\overline{s} : T \to |\mathfrak{A}|
+\]
+que mapea termos para elementos do universo de $\mathfrak{A}$. Como:
+
+\begin{enumerate}
+\item Para cada variável $x$, $\overline{s}(x) = s(x)$.
+\item Para cada constante $c$, $\overline{s}(c) = c^{\mathfrak{A}}$.
+\item Se $t_1,\ldots,t_n$ são termos e $f$ é uma fução, então
+\[
+\overline{s}(f(t_1,\ldots,t_n)) = f^{\mathfrak{A}}(\overline{s}(t_1),\ldots,\overline{s}(t_n))
+\]
+\end{enumerate}
+
+$\overline{s}$ depende de $\mathfrak{A}$ e $s$. Notação alternativa para $\overline{s}(t)$ poderia ser $t^{\mathfrak{A}} [s]$.
+\end{frame}
+
+
+\begin{frame} 
+  \frametitle{Interpretação de fórmulas}
+
+\begin{overprint}
+
+\onslide<1>
+\setlength{\parskip}{10pt}
+
+\textbf{Fórmulas atômicas}. Definimos explicitamente, dois casos:
+
+\begin{enumerate}
+\item Igualdade onde $=$ significa $=$, não é um parâmetro aberto à
+  interpretações.
+\[
+\models_{\mathfrak{A}} t_1 = t_2\ [s] \ \text{ sse } \ \overline{s}(t_1) = \overline{s}(t_2)
+\]
+\item Para um predicado $n$-ário $P$:
+\[
+\models_{\mathfrak{A}} P(t_1,\ldots,t_n)\ [s]\ \text{ sse } \ \langle \overline{s}(t_1),\ldots,\overline{s}(t_n) \rangle \in P^{\mathfrak{A}}
+\]
+\end{enumerate}
+
+\onslide<2>
+\setlength{\parskip}{10pt}
+
+\textbf{Outras WFF}. Definimos \emph{recursivamente}:
+
+\begin{enumerate}
+\item $\models_{\mathfrak{A}} \neg\phi\ [s]$ sse $\not\models_{\mathfrak{A}} \phi\ [s]$
+\item $\models_{\mathfrak{A}} \phi \to \psi\ [s]$ sse ou
+  $\not\models_{\mathfrak{A}} \phi\ [s]$ ou $\models_{\mathfrak{A}}
+  \psi\ [s]$ ou ambos.
+\item $\models_{\mathfrak{A}} \phi \land \psi\ [s]$ sse 
+  $\models_{\mathfrak{A}} \phi\ [s]$ e $\models_{\mathfrak{A}} \psi\ [s]$.
+\item $\models_{\mathfrak{A}} \phi \lor \psi\ [s]$ sse 
+  $\models_{\mathfrak{A}} \phi\ [s]$ ou $\models_{\mathfrak{A}} \psi\ [s]$.
+\item $\models_{\mathfrak{A}} \forall x \psi\ [s]$ sse para todo $d\in
+  |\mathfrak{A}|$, temos $\models_{\mathfrak{A}} \psi\ [s(x|d)]$.
+\end{enumerate}
+
+Onde $s(x|d)$ é a função $s$ com uma diferença, para a variável $x$, ela retorna $d$. 
+\[
+s(x|d)(y) = \left\{ \begin{array}{ll}
+      s(y) & \text{se } y \neq x \\
+      d    & \text{se } y = x \\
+    \end{array} \right.
+\]
+\end{overprint}
+\end{frame}
+
+
+\begin{frame}{Pragmatics}
+  \begin{itemize}
+  \item Em geral, não lidamos diretamente com a interpretação, mas com
+    \emph{teorias} que limitem as interpretações que estamos
+    interessados.
+
+  \item Seja $\alpha$ e $\beta$ duas sentenças quaisquer e $\gamma$ a
+    setença $\neg(\beta \land \neg\alpha)$. Suponha $\mathcal{I}$ uma
+    interpretação que torne $\alpha$ verdadeira, em $\mathcal{I}$ a
+    fórmula $\gamma$ também será verdadeira, por que?
+
+  \item Não precisamos para isso entender nenhum dos símbolos não
+    lógicos de $\alpha$ ou $\gamma$.
+
+  \item Dizemos que $\alpha \models \gamma$ ($\gamma$ é consequência
+    lógica de $\alpha$).
+
+  \item As letras $\alpha$, $\gamma$ e $\beta$ são 'esquemas' de
+    fórmulas.
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Consequência Lógica}
+
+  $S \models \alpha$ onde S é um conjunto de sentenças. S
+  \emph{logically entails} $\alpha$. Se e somente se (sss)\vfill
+
+  para toda interpretação $\mathcal{I}$ se $\mathcal{I} \models S$
+  então $\mathcal{I} \models \alpha$. Em outras palavras, todo modelo
+  de S satisfaz $\alpha$.\vfill
+
+  De outra forma, não existe interpretação $\mathcal{I}$ tal que
+  $\mathcal{I} \models S \cup \{\neg\alpha\}$. Dizemos que
+  $S \cup \{\neg\alpha\}$ é insatisfatível (\emph{unsatisfiable})
+  neste caso.\vfill
+
+  \emph{Valid} é um caso especial de \emph{entailment}: Uma sentença é
+  \emph{válida} quando $\models\alpha$, ou seja, é consequência lógica
+  de um conjunto vazio. Neste caso, para toda interpretação
+  $\mathcal{I}$, temos ${\cal I}\models\alpha$. Ou $\neg\alpha$ é
+  unsat.\vfill
+
+  \emph{Entailment} se reduz para \emph{valid}: if
+  $S = \{ \alpha_1,\ldots,\alpha_n\}$ então $S\models\alpha$ sss a
+  sentença $s_1\land\ldots\land\alpha_n\to\alpha$ é \emph{válida}.
+\end{frame}
+
+
+\begin{frame}{Resolução}
+
+  Dada uma KB e uma sentença $\alpha$, queremos um procedimento para
+  decidir se $KB \models\alpha$. Se $\beta(x_1,\ldots,x_n)$ é uma
+  fórmula com variáveis livres, queremos ainda um procedimento para
+  para achar termos $t_i$, se eles existirem, tal que
+  $KB\models\beta(t_1,\ldots,t_n)$.\vfill
+
+  Mas como veremos, nenhum método computacional poderá sempre nos dar
+  a resposta desejada. Mas queremos um método o mais correto e
+  completo possível.\vfill
+
+  Lembrando que $KB\models\alpha$ iff
+  $\models (\alpha_1\land\ldots\land\alpha_n)\to\alpha$ iff
+  $KB\cup\{\neg\alpha\}$ não é 'satisfatível' iff
+  $KB\cup\{\neg\alpha\}\models\neg TRUE$.
+\end{frame}
+
+\begin{frame}{Caso Proposicional}
+
+  Toda fórmula $\alpha$ pode ser convertida em uma fórmula $\alpha'$
+  equivalente, na forma de uma conjunção de dijunções de literais,
+  onde literais são átomos ou negação de átomos.\vfill
+
+  Dizemos que $\alpha$ e $\alpha'$ são equivalentes logicamente e
+  $\alpha'$ está na forma CNF (conjuntive normal form).\vfill
+
+  \[
+    (p \lor \neg q) \land (q \lor r \lor \neg s \lor p) \land (\neg r \lor q)
+  \]
+
+\end{frame}
+
+\begin{frame}{Procedimento para CNF}
+  \begin{enumerate}
+  \item Eliminar $\to, \equiv$ usando o fato destas serem abreviações
+    para fórmulas expressas com $\lor, \land, \neg$.
+  \item mover $\neg$ para dentro, até que aparece apenas em frente a
+    um átomo, usando equivalências:
+    \begin{align*}
+      \models & \neg\neg\alpha \equiv \alpha \\
+      \models & \neg(\alpha\land\beta) \equiv (\neg\alpha\lor\neg\beta) \\
+      \models & \neg(\alpha\lor\beta) \equiv (\neg\alpha\land\neg\beta)
+    \end{align*}
+  \item Distribuir $\land$ em $\lor$ usando
+    \[ \models (\alpha \lor (\beta \land \gamma)) \equiv
+      ((\beta \land \gamma) \lor \alpha) \equiv
+      ((\alpha\lor\beta) \lor (\alpha\lor\gamma)) \]
+  \item Coletar termos usando
+    \begin{align*}
+      \models & (\alpha\land\alpha) \equiv \alpha \\
+      \models & (\alpha\lor\alpha) \equiv \alpha
+    \end{align*}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Example}
+
+  \[ (P \to Q) \to R \]
+  
+\end{frame}
+
+\begin{frame}{Formula Clausal}
+
+  Forma abreviada de CNF. Conjunto finito de clausulas onde clausulas
+  são conjuntos finitos de átomos.\vfill
+
+  Entendidas como a conjunção das clausulas. Onde as clausulas são a
+  dijunção dos literais.\vfill
+
+  Se $p$ é um literal, usamos $\overline{p}$ para seu
+  complemento. $\overline{p} = \neg p$ e $\neg\overline{p} = p$.\vfill
+
+  Examples: $[p, \neg q,r]$ e $\{[p, \neg q, r],[q]\}$ e $[\neg p]$
+  (unit clause)\vfill
+
+  Importante: $\{\}$ (fórmula clausal vazia) é diferente de $\{[]\}$
+  (fórmula contendo apenas uma cláusula vazia). A $[]$ (clausula
+  vazia) é entendida como $\neg TRUE$ (dijunção não possível) e logo,
+  $\{[]\}$ é $\neg TRUE$. Mas $\{\}$ é uma conjunção sem
+  `constraints`, logo $TRUE$.
+\end{frame}
+
+\begin{frame}{Procedimento}
+
+  Colocar as fórmulas de KB e a fórmula $\alpha$ na forma CNF.\vfill
+
+  Determinar se o conjunto resultante é SAT.\vfill
+
+  Entailment então se reduz a SAT do conjunto de fórmulas em CNF.
+
+\end{frame}
+
+
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,50 @@
+#+Title: Notas sobre o final do capítulo 4
+
+* ATP - Automated Theorem Proving
+
+Terminamos de ver os conceitos básicos de [[https://en.wikipedia.org/wiki/Resolution_(logic)][Resolução]], sistema dedutivo
+implementado no [[http://www.ai.sri.com/~stickel/snark.html][SNARK]] prover.
+
+Vimos em sala alguns exemplos do uso do SNARK e TPTP+E para provar
+mecanicamente problemas do livro (/toy examples/). Para quem se
+interessar, o problema SUDOKU ainda merece alguma investigação,
+mostrei alguns experimentos meus incompletos. Vide diretório sudoku
+este repo.
+
+Para os interessados em conhecer outro método de prova (sistema
+dedutivo), sugiro a leitura de
+http://logitext.mit.edu/logitext.fcgi/tutorial, bom tutorial sobre
+[[https://en.wikipedia.org/wiki/Sequent_calculus][Cálculo de Sequentes]].
+
+* SUMO
+
+Site oficial fica em http://ontologyportal.org/. Os repositórios da
+ferramenta Sigma e da ontologia ficam em
+https://github.com/ontologyportal/.
+
+Curso do Adam sobre SUMO http://www.adampease.org/CBS6834/. Peço que
+os alunos tentem se juntar em grupo (duplas pelo menos) e tentar fazer
+os exercícios propostos pelo Adam. Em especial, rodar Sigma, editar
+uma ontologia, ver resultados, entender os arquivos de mapping para a
+Wordnet etc.
+
+Para consultar a [[https://wordnet.princeton.edu/][Wordnet de Princeton]] podem usar nosso site da
+ [[http://wnpt.brlcloud.com/wn/][OpenWordnet-PT]].
+
+Uma forma interessante de pensarmos como expandir SUMO é fazer isto
+tomando como referência um objetivo completo como avaliar se uma
+sentença implica (/entailment/) em outra sentença. Para isso podemos
+usar o corpus [[http://clic.cimec.unitn.it/composes/sick.html][SICK]] com pares de sentença e começar a pensar em como
+seria implementar um sistema para 'calcular' este /entailment/.
+
+Já começamos a brincar com este corpus, o repo está em
+https://github.com/own-pt/rte-sick. E já começamos a pensar no que
+SUMO precisa para 'entender' as sentenças do SICK, vide o
+https://github.com/own-pt/rte-sick/issues/75. Outra discussão parecida
+em https://github.com/own-pt/rte-sick/issues/74.
+
+* Vídeos interessantes
+
+- BFO https://www.youtube.com/watch?v=iTNQYyh88-Y&t=1895s&index=20&list=WL
+- SUMO https://www.youtube.com/watch?v=EFQRvyyv7Fs
+
