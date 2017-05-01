@@ -9,7 +9,17 @@ Vimos em sala alguns exemplos do uso do SNARK e TPTP+E para provar
 mecanicamente problemas do livro (/toy examples/). Para quem se
 interessar, o problema SUDOKU ainda merece alguma investigação,
 mostrei alguns experimentos meus incompletos. Vide diretório sudoku
-este repo.
+este repo. Uma leitura bem interessante sobre SUDOKU é o post do [[http://norvig.com/sudoku.html][Peter
+Norvig]]. Existem várias implementações de SUDOKU em lógica de primeira
+ordem e lógica proposicional:
+
+- T. Hillenbrand, D. Topic, and C. Weidenbach, “Sudokus as Logical
+  Puzzles,” pp. 1–11, Apr. 2016.
+- I. Lynce and J. Ouaknine, “Sudoku as a SAT Problem,”
+  anytime.cs.umass.edu. [Online]. [[http://anytime.cs.umass.edu/aimath06/proceedings/P34.pdf][Available]].
+- G. Santos-García and M. Palomino, “Solving Sudoku Puzzles with
+  Rewriting Rules,” pp. 1–16, 2006.
+- https://www.cs.unm.edu/~mccune/sudoku/details.html
 
 Para os interessados em conhecer outro método de prova (sistema
 dedutivo), sugiro a leitura de
