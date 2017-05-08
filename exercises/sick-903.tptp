@@ -1,0 +1,92 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 902 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A: The man is doing a wheelie with a motorbike in a field which is mostly barren
+% B: The man is doing a wheelie with a motorcycle on ground which is mostly barren
+% A_entails_B
+% B_neutral_A
+
+/* I am assuming the algorithm is capable of identifying that the truth-value of
+the entailment between the phrases depends only on where they differ; that is, 
+it doesn't matter what a wheelie is in this case, because it is being done 
+according to both phrases. therefore the algorithm will only search in SUMO and 
+OWN for the terms it needs to resolve, in this case motorbike/motorcycle and 
+ground/field. */
+
+%%%% SICK pair %%%%
+
+% uncomment here and in the questions part to see if A entails B or B entails A:
+
+%fof(firstphrase, axiom, 
+%    ( man(X) & doing(X, wheelie) & riding(X, motorbike) & field(Y) & isin(X, Y) & is(Y, barren) )
+%).
+
+fof(secondphrase, axiom,
+    man(X) & doing(X, wheelie) & riding(X, motorcycle) & ground(Y) & isin(X, Y) & is(X, barren)
+).
+
+%%%% KB %%%%
+
+% OWN %
+
+%fof(bikeiscycle, axiom,
+%    ( motorbike = motorcycle )
+%). % SUMO does not specify motorcycle or motorbikes
+
+fof(fieldisground, axiom,
+    ! [X]: ( field(X) => ground(X) )
+).
+
+% SUMO %
+
+fof(fieldislandarea, axiom,
+    ! [X] : ( field(X) => landarea(X) )
+). % own id 08569998-n
+
+fof(groundislandarea, axiom,
+    ! [X] : ( ground(X) => landarea(X) )
+). % own id 109334396 
+
+%%%% questions %%%%
+
+fof(firstphrase, question,
+    ? [X,Y]: ( man(X) & doing(X, wheelie) & riding(X, motorbike) & field(Y) & isin(X, Y) & is(Y, barren) )
+).
+
+%fof(secondphrase, question,
+%    ? [X, Y]: ( man(X) & doing(X, wheelie) & riding(X, motorcycle) & ground(Y) & isin(X, Y) & is(X, barren) )
+%).
+
+
+/* this is a block comment
+%% using own-head KB %%
+
+% SICK pair
+
+%fof(firstphrase, axiom, 
+%    ( man(X) & doing(X, wheelie) & riding(X, motorbike) & field(Y) & isin(X, Y) & is(Y, barren) )
+%).
+
+fof(secondphrase, axiom,
+    man(X) & doing(X, wheelie) & riding(X, motorcycle) & ground(Y) & isin(X, Y) & is(X, barren)
+).
+
+% KB
+
+fof(bikeiscycle, axiom,
+    ( motorbike = motorcycle )
+).
+
+fof(fieldisground, axiom,
+    ! [X]: ( field(X) => ground(X) )
+).
+
+% questions
+
+%fof(secondphrase, question,
+%    ? [X, Y]: ( man(X) & doing(X, wheelie) & riding(X, motorcycle) & ground(Y) & isin(X, Y) & is(X, barren) )
+%).
+
+fof(firstphrase, question,
+    ? [X,Y]: ( man(X) & doing(X, wheelie) & riding(X, motorbike) & field(Y) & isin(X, Y) & is(Y, barren) )
+).
+
+*/
