@@ -2,6 +2,15 @@
 ;by bruno cuconato (@odanoburu)
 ;unlicensed to the public domain.
 
+;input: a finite list of atomic sentences, q 1 , . . . , q n
+;output: YES or NO according to whether a given KB entails all of the q i
+;1. if all of the goals q i are marked as solved, then return YES
+;2. check if there is a clause [ p, ¬p 1 , . . . , ¬p n ] in KB, such that all of its
+;negative atoms p 1 , ..., p n are marked as solved, and such that the
+;positive atom p is not marked as solved
+;3. if there is such a clause, mark p as solved and go to step 1
+;4. otherwise, return NO
+
 (defparameter *child-KB*
   '((Toddler)
     ((not Toddler) Child)
@@ -27,6 +36,9 @@
 (setf *CONCLUSIONS*
       nil)
 
+(setf *GOALS*
+      nil)
+
 (defun add-atom(atom ix)
   "pushes an empty atom record to the ATOMS variable, except for its on-clauses property, which has the clause where it was found."
   (push (list :atom atom :visited nil :on-clauses (list ix)) *ATOMS*))
@@ -38,7 +50,7 @@
 
 (defun find-atom(atom)
   "returns the property list of a given atom"
-  (first (remove-if-not #'(lambda(record) (equal (getf record :atom) atom)) *ATOMS*)))
+  (find atom *atoms* :key (lambda (record) (getf record :atom))))
 
 ;(defun remove-atom(atom)
 ;  "returns the property list of all atoms except for the one provided."
@@ -70,8 +82,16 @@
 (defun add-to-goals(atom &optional (solved nil))
   (push (list atom solved) *GOALS*))
 
-(defun query-kb(query kb)
-  (add-to-goals query)))
+;(defun query-kb(query kb)
+;  (add-to-goals query)))
+
+(defun checkgoals(goals)
+  (loop for goal in goals
+     when (null (second goal))
+     return 1))
+
+(defun search-resolutions(kb conclusions)
+  )
 
 (defun forward-chain(kb goals conclusions)
   (search-resolutions kb conclusions)
@@ -79,4 +99,4 @@
   (cond ((null solved) (print "NO"))
 	((= 1 solved) (print "YES"))
       (t (forward-chain kb goals conclusions))
-      ))
+      )))
