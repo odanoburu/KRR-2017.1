@@ -1,7 +1,13 @@
 ;exercise 1 of chapter 5 of BRACHMAN & LEVESQUE: KRR 2004
 ;by bruno cuconato (@odanoburu)
 ;unlicensed to the public domain.
-
+;
+;this program cannot be queried twice without restarting its state,
+;because the :on-clauses properties of the symbols will not be reset,
+;which will cause them to decrement the :remaining property of the
+;clauses more than they should, which causes the program to return
+;false results.
+;
 ;input: a finite list of atomic sentences, q 1 , . . . , q n
 ;output: YES or NO according to whether a given KB entails all of the q i
 ;1. if all of the goals q i are marked as solved, then return YES
@@ -10,8 +16,10 @@
 ;positive atom p is not marked as solved
 ;3. if there is such a clause, mark p as solved and go to step 1
 ;4. otherwise, return NO
+;
+;another source: https://people.cs.pitt.edu/~milos/courses/cs2740/Lectures/class6.pdf
 
-(defparameter *CHILD-KB*
+(defparameter *child-kb*
   (copy-tree '((Toddler)
     (Toddler Child)
     (Child Male Boy)
@@ -21,7 +29,7 @@
   "A simple KB."
   )
 
-(defvar *KB* *CHILD-KB*
+(defvar *kb* *child-kb*
   "the KB explored by forward chaining."
   )
 
@@ -45,6 +53,7 @@ the clauses' :conclusion property after its conclusion (positive atom
 in the horn clause) and the :remaining property after the number of
 negative atoms left to resolve in the clause"
   (setf (get (clause-symbol ix) :conclusion) (first (last clause)))
+  (setf (get (get (clause-symbol ix) :conclusion) :visited) nil)
   (setf (get (clause-symbol ix) :remaining) (- (length clause) 1)))
   
 (defun parse-clause(clause ix)
@@ -61,7 +70,7 @@ negative atoms left to resolve in the clause"
      for ix from 0
      do (parse-clause clause ix)))
 
-(defun feed-stack(kb)
+(defun push-stack(kb)
   "searches through the KB to check for atoms proven to be true."
   (let ((true-atoms nil))
   (loop for clause in kb
@@ -76,18 +85,18 @@ negative atoms left to resolve in the clause"
 the atoms it can, by decrementing the :remaining property on the
 clauses it appears negatively. also marks it as visited."
   (setf (get (first stack) :visited) t)
-  (dolist (ix (get (first stack) :on-clauses))
-    (setf (get (clause-symbol ix) :remaining) (- (get (clause-symbol ix) :remaining) 1)))
-  (rest stack))
+  (dolist (ix (get (pop stack) :on-clauses))
+    (decf (get (clause-symbol ix) :remaining)))
+  stack)
 
 (defun query-kb(kb query)
   "query the given kb, which is a list of horn clauses. query must be a positive atom."
   (parse-kb kb); populate symbol's property lists
   (let ((stack nil))
-    (setf stack (feed-stack kb)); init stack
+    (setf stack (push-stack kb)); init stack
     (loop while (and (not (member query stack)) (not (null stack))); if stack is empty or query is in stack, stop.
 	 do (setf stack (pop-stack stack)); resolve first member of stack
-	 (setf stack (feed-stack kb)))
+	 (setf stack (push-stack kb)))
     (if (member query stack)
 	t
 	nil)))
