@@ -85,10 +85,9 @@ clauses it appears negatively. also marks it as visited."
   (parse-kb kb); populate symbol's property lists
   (let ((stack nil))
     (setf stack (feed-stack kb)); init stack
-    (loop while (or (not (member query stack)) (not (null stack))); if stack is empty or query is in stack, stop.
+    (loop while (and (not (member query stack)) (not (null stack))); if stack is empty or query is in stack, stop.
 	 do (setf stack (pop-stack stack)); resolve first member of stack
 	 (setf stack (feed-stack kb)))
-    (assert (null stack))
     (if (member query stack)
 	t
 	nil)))
