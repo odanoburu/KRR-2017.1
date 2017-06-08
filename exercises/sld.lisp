@@ -68,15 +68,15 @@ negative atoms left to resolve in the clause"
      for ix from 0
      when (= (get (clause-symbol ix) :remaining) 0); if all negative atoms in clause have been resolved
      do (if (null (get (get (clause-symbol ix) :conclusion) :visited)); if conclusion has not been visited yet
-	 (push (get (clause-symbol ix) :conclusion) true-atoms))); add conclusion to stack, so that it can be propagated
+	    (push (get (clause-symbol ix) :conclusion) true-atoms))); add conclusion to stack, so that it can be propagated
   true-atoms))
 
 (defun pop-stack(stack)
   "takes the first element and from the stack and resolves it with all
 the atoms it can, by decrementing the :remaining property on the
 clauses it appears negatively. also marks it as visited."
+  (setf (get (first stack) :visited) t)
   (dolist (ix (get (first stack) :on-clauses))
-    (setf (get (first stack) :visited) t)
     (setf (get (clause-symbol ix) :remaining) (- (get (clause-symbol ix) :remaining) 1)))
   (rest stack))
 
