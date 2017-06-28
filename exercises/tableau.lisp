@@ -9,35 +9,35 @@
 
 ;;how do I aggregate my auxiliary functions and apply them correctly?
 
+(defun snoc(an-atom a-list)
+  "cons to end of list"
+  (reverse (cons an-atom (reverse a-list))))
 
-(defun to-NNF(clause)
+(defun to-NNF(clause &rest formula)
   ""
-  (let ((modifier (first clause)))
-    (cond ((equal modifier 'not) (funcall nnf-not (rest clause)))
-	  ((equal modifier 'reverse) (funcall modifier (rest clause)))
-	  ((equal modifier 'implies) (funcall modifier (rest clause)))
-	  ((equal modifier 'and) (funcall nnf-and (rest clause)))
-	  ((equal modifier 'or) (funcall nnf-or (rest clause)))
-	  ((equal modifier 'some) (funcall modifier (rest clause)))
-	  ((equal modifier 'only) (funcall modifier (rest clause)))
-	  ((equal modifier 'subsume) (funcall modifier (rest clause)))
-	  ((equal modifier 'equiv) (funcall modifier (rest clause)))
-	  (t clause))))
+  (let ((result nil))
+    (if (equal (first clause) 'not) (setf result (nnf-not (rest clause))) (to-NNF (rest clause) (snoc (first clause) formula)))
+    (when (null result) (snoc result formula))))
+    
+
+(defun is-atom(clause)
+  "works for '(not (not A)) too."
+  (if (or (atom clause) (and (equal (first clause) 'not) (is-atom (cadr clause)))) clause
+    nil))
 
 (defun nnf-not(clause)
   "argument is (rest (not clause))"
   (cond ((and (equal (length clause) 1) (eql t (first clause))) nil)
 	((and (equal (length clause) 1) (equal nil (first clause))) t)
 	((equal (length clause) 1) (cons 'not clause))
-	((equal (first clause) 'not) (nnf-not-not (rest clause)))
+	((equal (first clause) 'not) (cadr clause))
 	((equal (first clause) 'or) (nnf-or (rest clause)))
 	((equal (first clause) 'and) (nnf-and (rest clause)))
-	(t (print "oops"))))
+	(t nil)))
 
 (defun nnf-not-not(clause)
   ""
-  (if (equal (first clause) 'not) (rest clause)
-      clause))
+  (if (and (atom (first clause)) (equal (length (first clause)) 1)) (first clause) clause))
 
 (defun aux-negate(clause)
   "returns negated clause"
@@ -75,6 +75,8 @@
   (cons 'or (list (cons 'and (mapcar #'aux-negate clause)) (cons 'and
   clause))))
 
+
+;;because I don't know yet how do to proper testing in CL
 (defun stupid-tests()
   ""
   (assert (equal '(OR (NOT A) (NOT B)) (nnf-and (rest '(and A B)))))
