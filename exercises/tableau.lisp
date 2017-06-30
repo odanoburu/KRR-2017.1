@@ -122,15 +122,17 @@ uses only and's or's & not's."
 (defun tableau-and(clause)
   "clause is (rest '(and clause)). applies and rule to clause and
 returns NNF-KB with the resulting children added."
-  (cons (cons 'and clause) (mapcar #'apply-tableau clause)))
+  (cons (cons 'and clause) (mapcar #'aux-tableau clause)))
 
 (defun tableau-or(clause)
   ""
   (print clause))
 
-(defun aux-tableau(NNF-KB)
+(defun aux-tableau(NNF-KB &rest tree)
   ""
-  (snoc (mapcar #'apply-tableau nnf-kb) nnf-kb))
+  (setf tree (snoc NNF-KB tree))
+  (mapcar #'apply-tableau nnf-kb)
+  tree)
 
 (defun apply-tableau(clause)
   ""
