@@ -58,18 +58,24 @@ clause."
   (assert (equal (length clause) 2))
   (cons 'some (list (first clause) (nnf-aux-negate (second clause)))))
 
+;;deprecated in favor of mapcar version (which is also non destructive).
 (defun aux-to-NNF(clause)
   "auxliary function to to-nnf."
   (let ((result nil))
     (dolist (element clause)
       (setf result (snoc (to-NNF element) result)))
     result))
+;;;
+
+(defun aux-to-NNF(clause)
+  "auxliary function to to-nnf."
+  (mapcar #'to-NNF clause))
 
 (defun to-NNF(clause)
   "turns a clause into NNF."
   (cond ((is-atom clause) clause)
 	((equal (first clause) 'not) (to-NNF (nnf-not (cadr clause))))
-	(t (aux-to-NNF clause))))
+	(t (aux-to-NNF clause)))) ;;can implement check here
 
 ;;not including implies and equivalence
 (defun norm-implies(clause)
@@ -89,21 +95,71 @@ and or's"
   (list 'not clause))
 
 (defun aux-normalize(clause)
+  "auxiliary function to normalize."
+  (mapcar #'normalize clause))
+
+;;deprecated for above function
+(defun aux-normalize(clause)
   "auxliary function to normalize."
   (let ((result nil))
     (dolist (element clause)
       (setf result (snoc (normalize element) result)))
     result))
+;;;
 
 (defun normalize(clause)
-  "turns a clause into something that uses only and's or's & not's."
+  "turns a clause with implication and equivalence into something that
+uses only and's or's & not's."
   (cond ((is-atom clause) clause)
 	((equal (first clause) 'equiv) (normalize (norm-equiv (rest clause))))
 	((equal (first clause) 'implies) (normalize (norm-implies (rest clause))))
 	(t (aux-normalize clause))))
 
+(defun norm(clause)
+  "applies (to-nnf (normalize clause))."
+  (to-nnf (normalize clause)))
 
-;;because I don't know yet how do to proper testing in CL
+;; deprecated
+(defun KB-to-nnf(KB)
+  "takes a KB (list of clauses) and returns their conjunction in NNF."
+  (if (equal (length kb) 1)
+      (norm (first kb))
+      (let ((nnf-kb nil))
+	(dolist (clause kb)
+	  (setf nnf-kb (snoc (norm clause) nnf-kb)))
+	(cons 'and nnf-kb))))
+;;;
+
+(defun KB-to-nnf(KB)
+  "takes a KB (list of clauses) and returns their conjunction in NNF."
+  (if (equal (length kb) 1)
+      (progn (assert (is-atom (first kb))) (norm (first kb)))
+      (cons 'and (mapcar #'norm kb))))
+
+;;might be better if I call the future aux-tableau on the resulting formulas already, right?
+(defun tableau-and(clause NNF-KB)
+  "clause is (rest '(and clause)). applies and rule to clause and
+returns NNF-KB with the resulting children added."
+  (dolist (formula clause)
+    (setf nnf-kb (snoc formula nnf-kb)))
+  nnf-kb)
+
+(defun tableau-and(clause NNF-KB)
+  "clause is (rest '(and clause)). applies and rule to clause and
+returns NNF-KB with the resulting children added."
+  (mapcar #'))
+
+(defun tableau-or(clause NNF-KB)
+  ""
+  (dolist (formula clause)
+    (setf nnf-kb (snoc))))
+
+(defun tableau(KB query)
+  ""
+  )
+
+
+;;because I don't know yet how to do proper testing in CL
 (defun stupid-tests()
   ""
   (assert (equal '(OR (NOT A) (NOT B)) (nnf-and (rest '(and A B)))))
@@ -115,4 +171,7 @@ and or's"
   (assert (equal '(ONLY C (OR (NOT D) (NOT E))) (nnf-some (rest '(some C (and D E))))))
   (assert (equal '(SOME C (AND (NOT E) (NOT F))) (nnf-only (rest '(only C (or E F))))))
   (assert (equal '(OR (ONLY R (OR (NOT A) B)) (SOME R (AND A B))) (to-nnf '(or (not (some r (and A (not B)))) (not (only r (or (not A) (not (not (not B))))))))))
+  (assert (equal '(AND (OR (NOT A) (AND (OR B E) (OR (NOT B) (NOT E)))) (AND C (NOT D))) (KB-to-nnf '((not (and a (equiv b e))) (not (or (not c) d))))))
+  (assert (equal '(AND (AND C (NOT D)) E C (NOT D)) (tableau-and (rest '(and C (not D))) '(and (and C (not D)) E))))
+  (assert (equal '(OR (AND (NOT (OR (NOT A) B)) (NOT (OR (NOT A) B)) (NOT (OR (NOT (NOT B)) (NOT A)))) (AND (OR (NOT A) B) (OR (NOT A) B) (OR (NOT (NOT B)) (NOT A)))) (normalize '(equiv (implies a b) (or (not a) b) (implies (not b) (not a))))))
   t)
