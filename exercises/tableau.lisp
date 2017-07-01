@@ -26,6 +26,10 @@ and their negations."
   "checks if the operator of clause is modifier."
   (equal (first clause) modifier))
 
+(defun mappend (fn &rest lsts)
+  "maps elements in list and finally appends all resulted lists."
+  (apply #'append (apply #'mapcar fn lsts)))
+
 ;;;;;;;;;;;;;
 ;;;;;NNF;;;;;
 (defun nnf-not(clause)
@@ -122,17 +126,16 @@ uses only and's or's & not's."
 (defun tableau-and(clause)
   "clause is (rest '(and clause)). applies and rule to clause and
 returns NNF-KB with the resulting children added."
-  (cons (cons 'and clause) (mapcar #'aux-tableau clause)))
+  (aux-tableau clause))
 
 (defun tableau-or(clause)
   ""
   (print clause))
 
-(defun aux-tableau(NNF-KB &rest tree)
+(defun aux-tableau(clause)
   ""
-  (setf tree (snoc NNF-KB tree))
-  (mapcar #'apply-tableau nnf-kb)
-  tree)
+  (append clause (mapcar #'apply-tableau clause)))
+    
 
 (defun apply-tableau(clause)
   ""
