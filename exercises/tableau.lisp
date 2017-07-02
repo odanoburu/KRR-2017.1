@@ -39,7 +39,7 @@ and their negations."
 (defun list-mod(clause a-list)
   ""
   (if (null a-list)
-      clause
+      (list clause)
       (list clause a-list)))
 
 ;;;;;;;;;;;;;
@@ -135,14 +135,19 @@ uses only and's or's & not's."
       (progn (assert (is-atom (first kb))) (norm (first kb)))
       (mapcar #'norm kb)))
 
-(defun tableau-and(clause)
-  "clause is (rest '(and clause)). applies and rule to clause and
-returns NNF-KB with the resulting children added."
-  (aux-tableau clause 'and))
-
-(defun tableau-or(clause)
+;;uncertain
+#|(defun and-tree(clause &optional tree)
   ""
-  (aux-tableau clause 'or))
+  (if (null clause)
+      tree
+      (and-tree (butlast clause) (list-mod (make-tree (first (last clause))) tree))))
+|#
+
+(defun or-tree(clause &optional tree)
+  ""
+  (if (null clause)
+      tree
+      (or-tree (butlast clause) (cons (last clause) tree))))
 
 (defun and-tree(clause &optional tree)
   ""
@@ -150,31 +155,16 @@ returns NNF-KB with the resulting children added."
       tree
       (and-tree (butlast clause) (list-mod (first (last clause)) tree))))
 
-;;(defun or-tree(clause &optional tree)
-;;  ""
-;;  )
-
-(defun make-tree(clause) ;;modifier)
-  ""
-  (cond ((modifier-is clause 'and) (mapcar #'apply-tableau clause))
-	((modifier-is clause 'or) (mapcar #'apply-tableau clause))))
-
-(defun aux-tableau(clause modifier)
-  ""
-  (list (cons-mod modifier clause) (mapcar #'apply-tableau clause)))  
-
-
-(defun apply-tableau(clause)
+(defun make-tree(clause)
   ""
   (cond ((is-atom clause) clause)
-	((modifier-is clause 'and) (tableau-and (rest clause)))
-	((modifier-is clause 'or) (tableau-or (rest clause)))
-	(t (print 0)))) ;;(aux-tableau clause)))))
+	((modifier-is clause 'and) (list clause (and-tree (rest clause))))
+	((modifier-is clause 'or) (list clause (or-tree (rest clause))))))
 
 (defun tableau(KB query)
   ""
   (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb))))
-    (aux-tableau queried-kb 'and)))
+    (make-tree (cons 'and queried-kb))))
 
 ;;;;;;;;;;;;;;;
 ;;;;;tests;;;;;
