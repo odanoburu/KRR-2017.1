@@ -15,6 +15,12 @@
   "cons to end of list."
   (reverse (cons an-atom (reverse a-list))))
 
+(defun cons-mod(modifier clause)
+  ""
+  (if (null modifier)
+      clause
+      (cons modifier clause)))
+
 (defun is-atom(clause)
   "returns nil if clause is not an atom, which includes lisp's atoms
 and their negations."
@@ -29,6 +35,12 @@ and their negations."
 (defun mappend (fn &rest lsts)
   "maps elements in list and finally appends all resulted lists."
   (apply #'append (apply #'mapcar fn lsts)))
+
+(defun list-mod(clause a-list)
+  ""
+  (if (null a-list)
+      clause
+      (list clause a-list)))
 
 ;;;;;;;;;;;;;
 ;;;;;NNF;;;;;
@@ -126,29 +138,42 @@ uses only and's or's & not's."
 (defun tableau-and(clause)
   "clause is (rest '(and clause)). applies and rule to clause and
 returns NNF-KB with the resulting children added."
-  (aux-tableau clause))
+  (aux-tableau clause 'and))
 
 (defun tableau-or(clause)
   ""
-  (print clause))
+  (aux-tableau clause 'or))
 
-(defun aux-tableau(clause)
+(defun and-tree(clause &optional tree)
   ""
-  (append clause (mapcar #'apply-tableau clause)))
-    
+  (if (null clause)
+      tree
+      (and-tree (butlast clause) (list-mod (first (last clause)) tree))))
+
+(defun or-tree(clause &optional tree)
+  ""
+  )
+
+(defun make-tree(clause modifier)
+  ""
+  (cond ((modifier-is 'and) (mapcar #'apply-tableau clause))
+	(modifier-is 'or) (mapcar #'apply-tableau clause)))
+
+(defun aux-tableau(clause modifier)
+  ""
+  (list (cons-mod modifier clause) (mapcar #'apply-tableau clause)))  
 
 (defun apply-tableau(clause)
   ""
   (cond ((is-atom clause) clause)
 	((modifier-is clause 'and) (tableau-and (rest clause)))
-	((modifier-is clause 'or) (tableau-or clause));;not ready
-	(t (aux-tableau clause))))
+	((modifier-is clause 'or) (tableau-or (rest clause)))
+	(t (progn (print 0) (aux-tableau clause)))))
 
 (defun tableau(KB query)
   ""
   (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb))))
-    (aux-tableau queried-kb)))
-
+    (aux-tableau queried-kb 'and)))
 
 ;;;;;;;;;;;;;;;
 ;;;;;tests;;;;;
