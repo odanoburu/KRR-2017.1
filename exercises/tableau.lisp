@@ -134,35 +134,23 @@ uses only and's or's & not's."
   (if (equal (length kb) 1)
       (progn (assert (is-atom (first kb))) (norm (first kb)))
       (mapcar #'norm kb)))
-
+#|
 (defun tableau-and(clause)
   "clause is (rest '(and clause)). applies and rule to clause and
 returns NNF-KB with the resulting children added."
-  (aux-tableau clause 'and))
-
+  ( clause 'and))
+|#
 (defun tableau-or(clause)
   ""
-  (aux-tableau clause 'or))
+  (print clause))
 
-(defun and-tree(clause &optional tree)
+(defun tableau-and(clause)
   ""
-  (if (null clause)
-      tree
-      (and-tree (butlast clause) (list-mod (first (last clause)) tree))))
+  (aux-tabl (rest
 
-;;(defun or-tree(clause &optional tree)
-;;  ""
-;;  )
-
-(defun make-tree(clause) ;;modifier)
+(defun aux-tableau(clause)
   ""
-  (cond ((modifier-is clause 'and) (mapcar #'apply-tableau clause))
-	((modifier-is clause 'or) (mapcar #'apply-tableau clause))))
-
-(defun aux-tableau(clause modifier)
-  ""
-  (list (cons-mod modifier clause) (mapcar #'apply-tableau clause)))  
-
+  (mapcar #'apply-tableau clause))
 
 (defun apply-tableau(clause)
   ""
@@ -171,10 +159,11 @@ returns NNF-KB with the resulting children added."
 	((modifier-is clause 'or) (tableau-or (rest clause)))
 	(t (print 0)))) ;;(aux-tableau clause)))))
 
+
 (defun tableau(KB query)
   ""
   (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb))))
-    (aux-tableau queried-kb 'and)))
+    (aux-tableau queried-kb)))
 
 ;;;;;;;;;;;;;;;
 ;;;;;tests;;;;;
