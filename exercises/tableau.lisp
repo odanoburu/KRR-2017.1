@@ -150,25 +150,26 @@ returns NNF-KB with the resulting children added."
       tree
       (and-tree (butlast clause) (list-mod (first (last clause)) tree))))
 
-(defun or-tree(clause &optional tree)
-  ""
-  )
+;;(defun or-tree(clause &optional tree)
+;;  ""
+;;  )
 
-(defun make-tree(clause modifier)
+(defun make-tree(clause) ;;modifier)
   ""
-  (cond ((modifier-is 'and) (mapcar #'apply-tableau clause))
-	(modifier-is 'or) (mapcar #'apply-tableau clause)))
+  (cond ((modifier-is clause 'and) (mapcar #'apply-tableau clause))
+	((modifier-is clause 'or) (mapcar #'apply-tableau clause))))
 
 (defun aux-tableau(clause modifier)
   ""
   (list (cons-mod modifier clause) (mapcar #'apply-tableau clause)))  
+
 
 (defun apply-tableau(clause)
   ""
   (cond ((is-atom clause) clause)
 	((modifier-is clause 'and) (tableau-and (rest clause)))
 	((modifier-is clause 'or) (tableau-or (rest clause)))
-	(t (progn (print 0) (aux-tableau clause)))))
+	(t (print 0)))) ;;(aux-tableau clause)))))
 
 (defun tableau(KB query)
   ""
