@@ -3,13 +3,13 @@
 (defun snoc(an-atom a-list)
   "cons to end of list."
   (reverse (cons an-atom (reverse a-list))))
-
+#|
 (defun cons-mod(modifier clause)
   ""
   (if (null modifier)
       clause
       (cons modifier clause)))
-
+|#
 (defun is-atom(clause)
   "returns nil if clause is not an atom, which includes lisp's atoms
 and their negations."
@@ -25,11 +25,11 @@ and their negations."
   "maps elements in list and finally appends all resulted lists."
   (apply #'append (apply #'mapcar fn lsts)))
 
-(defun list-mod(clause a-list)
-  ""
-  (if (null a-list)
-      (list clause)
-      (list clause a-list)))
+(defun consapp(elist a-list)
+  "cons elist a-list if elist is atom, else append the two."
+  (if (atom elist)
+      (cons elist a-list)
+      (append elist a-list)))
 
 ;;;;;;;;;;;;;
 ;;;;;NNF;;;;;
@@ -107,10 +107,14 @@ and or's"
 (defun normalize(clause)
   "turns a clause with implication and equivalence into something that
 uses only and's or's & not's."
-  (cond ((is-atom clause) clause)
-	((modifier-is clause 'equiv) (normalize (norm-equiv (rest clause))))
-	((modifier-is clause 'implies) (normalize (norm-implies (rest clause))))
-	(t (aux-normalize clause))))
+  (cond ((is-atom clause)
+	  clause)
+	((modifier-is clause 'equiv)
+	  (normalize (norm-equiv (rest clause))))
+	((modifier-is clause 'implies)
+	  (normalize (norm-implies (rest clause))))
+	(t
+	 (aux-normalize clause))))
 
 ;;;;;;;;;;;;;;;;;
 ;;;;;tableau;;;;;
@@ -136,8 +140,9 @@ atoms|ands|ors"
 	(setf (symbol-value child-var) (make-formula :formula child-formula :parent parent-var))
 	(setf parent-var child-var)
 	;;(setf parent-formula child-formula)
-	(setf children (push-formula children child-var))))
-    children))
+	(setf children (push-formula children child-var))
+	(setf leaf child-var)))
+    (cons leaf children)))
 
 (defun or-tree(parent-var parent-formula)
   "takes the formulas in (rest (or f1 f2 ... fn)) and makes nodes,
@@ -165,7 +170,9 @@ type (ands and atoms are prioritized over ors)."
 	  ((modifier-is formula 'or) (snoc formula-var a-list)))))
   
 (defun make-tree(parent-var parent-formula)
-  ""
+  "makes nodes from parent-formula with parent-var as
+parent (parent-var not necessarily maps to parent-formula, as in
+tableau the parent might not be the 'biological' parent)"
   (cond ((is-atom parent-formula) parent-formula)
 	((modifier-is parent-formula 'and)
 	 (and-manage-tree (and-tree parent-var (rest parent-formula))))
@@ -173,37 +180,33 @@ type (ands and atoms are prioritized over ors)."
 	 (or-tree parent-var (rest parent-formula)))))
 
 (defun and-manage-tree(nodes)
-  ""
-  (let ((leaf (first (last nodes))))
-    (dolist (node nodes)
+  "takes the children made by and-tree and recursively calls maketree
+on them if they haven't been visited yet"
+  (let ((leaf (first nodes))
+	(children nil))
+    (dolist (node (rest nodes))
       (when (null (formula-visited (symbol-value node))) ;;ignore atoms
-	(make-tree leaf (formula-formula (symbol-value node))))))) ;;makes children pointing to leaf, not "parent"
-
-(defun and-manage-tree(nodes)
-  ""
-  (let ((leaf (first (last nodes)))
-	(result nil))
-    (dolist (node nodes)
-      (when (null (formula-visited (symbol-value node)))
-	(setf result (cons (make-tree leaf (formula-formula (symbol-value node))) result))))
-    (if (null result)
+	(progn (setf (formula-visited (symbol-value node)) T) (setf children (consapp (make-tree leaf (formula-formula (symbol-value node))) children)))))
+    (if (null children)
 	leaf
-	result)))
+	children)))
 
 (defun or-manage-tree(nodes)
-  ""
+  "takes the children made by or-tree and recursively calls make-tree
+on them if they haven't been visited yet."
   (dolist (node nodes)
     (when (null (formula-visited (symbol-value node)))
-      (make-tree node (formula-formula (symbol-value node))))))
+      (progn (setf (formula-visited (symbol-value node)) T) (make-tree node (formula-formula (symbol-value node)))))))
 
 (defun tableau(KB query)
-  ""
+  "takes a list of formulas and a query, negates the query, creates
+the root and calls make-tree on it."
   (let* ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
 	 (kb-var (make-formula :formula queried-kb :visited T)))
     (make-tree kb-var queried-kb)))
 
 (defstruct formula
-  ""
+  "structures nodes."
   (formula)
   (parent nil)
   (visited nil))
