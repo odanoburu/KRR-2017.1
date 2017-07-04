@@ -136,25 +136,30 @@ uses only and's or's & not's."
       (mapcar #'norm kb)))
 
 ;;uncertain
-#|(defun and-tree(clause &optional tree)
+(defun and-tree(clause &optional tree)
   ""
   (if (null clause)
       tree
       (and-tree (butlast clause) (list-mod (make-tree (first (last clause))) tree))))
-|#
+
+(defun and-tree(clause &optional tree)
+  ""
+  (if (null clause)
+      tree
+      (and-tree (rest clause) (append tree (list (make-tree (first clause)))))))
 
 (defun or-tree(clause &optional tree)
   ""
   (if (null clause)
       tree
       (or-tree (butlast clause) (cons (last clause) tree))))
-
+#|
 (defun and-tree(clause &optional tree)
   ""
   (if (null clause)
       tree
       (and-tree (butlast clause) (list-mod (first (last clause)) tree))))
-
+|#
 (defun make-tree(clause)
   ""
   (cond ((is-atom clause) clause)
