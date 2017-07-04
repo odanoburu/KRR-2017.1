@@ -1,15 +1,11 @@
+;;; current development: or is not working well. see trace of (tableau '((or A (not B))) 'A)
+
 ;;;;;;;;;;;;;;;
 ;;;;;utils;;;;;
 (defun snoc(an-atom a-list)
   "cons to end of list."
   (reverse (cons an-atom (reverse a-list))))
-#|
-(defun cons-mod(modifier clause)
-  ""
-  (if (null modifier)
-      clause
-      (cons modifier clause)))
-|#
+
 (defun is-atom(clause)
   "returns nil if clause is not an atom, which includes lisp's atoms
 and their negations."
@@ -139,7 +135,6 @@ atoms|ands|ors"
       (let ((child-var (gentemp)))
 	(setf (symbol-value child-var) (make-node :formula child-formula :parent parent-var))
 	(setf parent-var child-var)
-	;;(setf parent-formula child-formula)
 	(setf children (push-formula children child-var))
 	(setf leaf child-var)))
     (cons leaf children)))
@@ -162,9 +157,8 @@ atoms|ands|ors."
 type (ands and atoms are prioritized over ors)."
   ;;um átomo depois de or é uma leaf? se conseguir fazer todos os ands antes de ors, sim.
   (let ((formula (node-formula (symbol-value formula-var))))
-    (cond ((is-atom
-    formula) (progn (setf (node-visited (symbol-value formula-var))
-			  T)
+    (cond ((is-atom formula)
+	   (progn (setf (node-visited (symbol-value formula-var)) T)
 		    (cons formula-var a-list)))
 	  ((modifier-is formula 'and) (cons formula-var a-list))
 	  ((modifier-is formula 'or) (snoc formula-var a-list)))))
@@ -177,7 +171,7 @@ tableau the parent might not be the 'biological' parent)"
 	((modifier-is parent-formula 'and)
 	 (and-manage-tree (and-tree parent-var (rest parent-formula))))
 	((modifier-is parent-formula 'or)
-	 (or-tree parent-var (rest parent-formula)))))
+	 (or-manage-tree (or-tree parent-var (rest parent-formula))))))
 
 (defun and-manage-tree(nodes)
   "takes the children made by and-tree and recursively calls maketree
@@ -194,16 +188,37 @@ on them if they haven't been visited yet"
 (defun or-manage-tree(nodes)
   "takes the children made by or-tree and recursively calls make-tree
 on them if they haven't been visited yet."
-  (dolist (node nodes)
-    (when (null (node-visited (symbol-value node)))
-      (progn (setf (node-visited (symbol-value node)) T) (make-tree node (node-formula (symbol-value node)))))))
+  (let ((children nil))
+    (dolist (node nodes)
+      (when (null (node-visited (symbol-value node)))
+	(progn (setf (node-visited (symbol-value node)) T)
+	       (setf children (cons (make-tree node (node-formula (symbol-value node))) children)))))
+    (if (null children)
+	nodes
+	children)))
 
 (defun tableau(KB query)
   "takes a list of formulas and a query, negates the query, creates
 the root and calls make-tree on it."
-  (let* ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
-	 (kb-var (make-node :formula queried-kb :visited T)))
+  (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
+	(kb-var (gentemp)))
+    (setf (symbol-value kb-var) (make-node :formula queried-kb :visited T))
     (make-tree kb-var queried-kb)))
+
+(defun draw-branch(node &optional branch)
+  "takes a node (leaf) as input and goes up its parents,
+returning a list of of nodes in generational order"
+  (let ((parent (node-parent node)))
+    (if (null parent)
+	(reverse (cons (node-formula node) branch))
+	(draw-branch (symbol-value parent) (cons (node-formula node) branch)))))
+
+(defun draw-tree(nodes &optional tree)
+  "takes a list of nodes (leaves) and goes up to their parents drawing
+the tree they form."
+  (if (null nodes)
+      tree
+      (draw-tree (rest nodes) (cons (draw-branch (first nodes)) tree))))
 
 (defstruct node
   "structures nodes."
