@@ -137,7 +137,7 @@ atoms|ands|ors"
 	(leaf nil))
     (dolist (child-formula parent-formula)
       (let ((child-var (gentemp)))
-	(setf (symbol-value child-var) (make-formula :formula child-formula :parent parent-var))
+	(setf (symbol-value child-var) (make-node :formula child-formula :parent parent-var))
 	(setf parent-var child-var)
 	;;(setf parent-formula child-formula)
 	(setf children (push-formula children child-var))
@@ -151,7 +151,7 @@ atoms|ands|ors."
   (let ((children nil))
     (dolist (child-formula parent-formula)
       (let ((child-var (gentemp)))
-	(setf (symbol-value child-var) (make-formula
+	(setf (symbol-value child-var) (make-node
 					:formula child-formula :parent
 					parent-var))
 	(setf children (push-formula children child-var))))
@@ -161,9 +161,9 @@ atoms|ands|ors."
   "takes a list/stack and cons/snoc'es formulas according to their
 type (ands and atoms are prioritized over ors)."
   ;;um átomo depois de or é uma leaf? se conseguir fazer todos os ands antes de ors, sim.
-  (let ((formula (formula-formula (symbol-value formula-var)))) ;;(varname (get-value-formula-in formula-object)
+  (let ((formula (node-formula (symbol-value formula-var))))
     (cond ((is-atom
-    formula) (progn (setf (formula-visited (symbol-value formula-var))
+    formula) (progn (setf (node-visited (symbol-value formula-var))
 			  T)
 		    (cons formula-var a-list)))
 	  ((modifier-is formula 'and) (cons formula-var a-list))
@@ -185,8 +185,8 @@ on them if they haven't been visited yet"
   (let ((leaf (first nodes))
 	(children nil))
     (dolist (node (rest nodes))
-      (when (null (formula-visited (symbol-value node))) ;;ignore atoms
-	(progn (setf (formula-visited (symbol-value node)) T) (setf children (consapp (make-tree leaf (formula-formula (symbol-value node))) children)))))
+      (when (null (node-visited (symbol-value node))) ;;ignore atoms
+	(progn (setf (node-visited (symbol-value node)) T) (setf children (consapp (make-tree leaf (node-formula (symbol-value node))) children)))))
     (if (null children)
 	leaf
 	children)))
@@ -195,17 +195,17 @@ on them if they haven't been visited yet"
   "takes the children made by or-tree and recursively calls make-tree
 on them if they haven't been visited yet."
   (dolist (node nodes)
-    (when (null (formula-visited (symbol-value node)))
-      (progn (setf (formula-visited (symbol-value node)) T) (make-tree node (formula-formula (symbol-value node)))))))
+    (when (null (node-visited (symbol-value node)))
+      (progn (setf (node-visited (symbol-value node)) T) (make-tree node (node-formula (symbol-value node)))))))
 
 (defun tableau(KB query)
   "takes a list of formulas and a query, negates the query, creates
 the root and calls make-tree on it."
   (let* ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
-	 (kb-var (make-formula :formula queried-kb :visited T)))
+	 (kb-var (make-node :formula queried-kb :visited T)))
     (make-tree kb-var queried-kb)))
 
-(defstruct formula
+(defstruct node
   "structures nodes."
   (formula)
   (parent nil)
