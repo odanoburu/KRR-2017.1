@@ -129,7 +129,8 @@ uses only and's or's & not's."
 with the first having parent-var as parent and the rest having the
 previous node as parent. returns the children made, ordered by
 atoms|ands|ors"
-  (let ((children nil))
+  (let ((children nil)
+	(leaf nil))
     (dolist (child-formula parent-formula)
       (let ((child-var (gentemp)))
 	(setf (symbol-value child-var) (make-formula :formula child-formula :parent parent-var))
@@ -145,7 +146,9 @@ atoms|ands|ors."
   (let ((children nil))
     (dolist (child-formula parent-formula)
       (let ((child-var (gentemp)))
-	(setf (symbol-value child-var) (make-formula :formula child-formula :parent parent-var))
+	(setf (symbol-value child-var) (make-formula
+					:formula child-formula :parent
+					parent-var))
 	(setf children (push-formula children child-var))))
     children))
 
@@ -154,15 +157,20 @@ atoms|ands|ors."
 type (ands and atoms are prioritized over ors)."
   ;;um átomo depois de or é uma leaf? se conseguir fazer todos os ands antes de ors, sim.
   (let ((formula (formula-formula (symbol-value formula-var)))) ;;(varname (get-value-formula-in formula-object)
-    (cond ((is-atom formula) (progn (setf (formula-visited (symbol-value formula-var)) T) (cons formula-var a-list)))
+    (cond ((is-atom
+    formula) (progn (setf (formula-visited (symbol-value formula-var))
+			  T)
+		    (cons formula-var a-list)))
 	  ((modifier-is formula 'and) (cons formula-var a-list))
 	  ((modifier-is formula 'or) (snoc formula-var a-list)))))
   
 (defun make-tree(parent-var parent-formula)
   ""
   (cond ((is-atom parent-formula) parent-formula)
-	((modifier-is parent-formula 'and) (and-manage-tree (and-tree parent-var (rest parent-formula))))
-	((modifier-is parent-formula 'or) (or-tree parent-var (rest parent-formula))))))
+	((modifier-is parent-formula 'and)
+	 (and-manage-tree (and-tree parent-var (rest parent-formula))))
+	((modifier-is parent-formula 'or)
+	 (or-tree parent-var (rest parent-formula)))))
 
 (defun and-manage-tree(nodes)
   ""
@@ -170,6 +178,17 @@ type (ands and atoms are prioritized over ors)."
     (dolist (node nodes)
       (when (null (formula-visited (symbol-value node))) ;;ignore atoms
 	(make-tree leaf (formula-formula (symbol-value node))))))) ;;makes children pointing to leaf, not "parent"
+
+(defun and-manage-tree(nodes)
+  ""
+  (let ((leaf (first (last nodes)))
+	(result nil))
+    (dolist (node nodes)
+      (when (null (formula-visited (symbol-value node)))
+	(setf result (cons (make-tree leaf (formula-formula (symbol-value node))) result))))
+    (if (null result)
+	leaf
+	result)))
 
 (defun or-manage-tree(nodes)
   ""
