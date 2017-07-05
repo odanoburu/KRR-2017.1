@@ -1,4 +1,4 @@
-;;; current development: or is not working well. see trace of (tableau '((or A (not B))) 'A)
+;;; current development: clash
 
 ;;;;;;;;;;;;;;;
 ;;;;;utils;;;;;
@@ -33,10 +33,17 @@ and their negations."
       (cons elist a-list)
       (append elist a-list)))
 
+(defun invert-signal(formula)
+  "inverts signal of atomic formula"
+  (assert (is-atom formula))
+  (if (atom formula)
+      (norm-aux-negate formula)
+      (cadr formula)))
+
 ;;;;;;;;;;;;;
 ;;;;;NNF;;;;;
 (defun nnf-not(clause)
-  "argument is (rest (not clause)). this functions applies NNF to a
+  "argument is (rest (not clause)). this function applies NNF to a
 clause."
   (cond ((and (equal (length clause) 1) (eql t (first clause))) nil)
 	((and (equal (length clause) 1) (equal nil (first clause))) t)
@@ -222,7 +229,8 @@ on them if they haven't been visited yet."
 
 (defun tableau(KB query)
   "takes a list of formulas and a query, negates the query, creates
-the root and calls make-tree on it."
+the root node, calls make-tree, then draw-tree, to return list of
+branches."
   (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
 	(kb-var (gensym)))
     (setf kb-var (make-node :formula queried-kb :visited T))
@@ -230,7 +238,7 @@ the root and calls make-tree on it."
 
 (defun draw-branch(node &optional branch)
   "takes a node (leaf) as input and goes up its parents,
-returning a list of of nodes in generational order"
+returning a list of their formulas in generational order"
   (let ((parent (node-parent node)))
     (if (null parent)
 	(cons (node-formula node) branch)
@@ -242,6 +250,35 @@ the tree they form."
   (if (null nodes)
       tree
       (draw-tree (rest nodes) (cons (draw-branch (first nodes)) tree))))
+#|
+(defun node-is-atomic-formula(node)
+  "returns the node if node has atomic formula, else returns nil."
+  (let ((formula (node-formula node)))
+    (if (is-atom formula)
+	node
+	nil)))
+
+(defun atomic-formulas-in-branch(branch)
+  "returns all the atomic formulas of a list/branch"
+  (let ((atomic-nodes (remove-if-not #'node-is-atomic-formula branch)))
+    (mapcar #'node-formula atomic-nodes)))
+|#
+
+(defun atomic-branch(branch)
+  "takes a list of formulas and returns the atomic ones."
+  (remove-if-not #'is-atom branch))
+
+(defun find-clash-branch(atomic-branch)
+  "takes formulas as input, not nodes. a clash can only occur between
+two atoms."
+  (let ((test-atom (invert-signal (first atomic-branch)))
+	(test-branch (rest atomic-branch)))
+    (dolist (formula test-branch)
+      (when (equal test-atom formula)
+	(return-from find-clash formula)))
+    (if (equal (length test-branch) 1)
+	nil
+	(find-clash (rest atomic-branch)))))
 
 ;;;;;;;;;;;;;;;;;;
 ;;;;;graphviz;;;;;
