@@ -250,19 +250,6 @@ the tree they form."
   (if (null nodes)
       tree
       (draw-tree (rest nodes) (cons (draw-branch (first nodes)) tree))))
-#|
-(defun node-is-atomic-formula(node)
-  "returns the node if node has atomic formula, else returns nil."
-  (let ((formula (node-formula node)))
-    (if (is-atom formula)
-	node
-	nil)))
-
-(defun atomic-formulas-in-branch(branch)
-  "returns all the atomic formulas of a list/branch"
-  (let ((atomic-nodes (remove-if-not #'node-is-atomic-formula branch)))
-    (mapcar #'node-formula atomic-nodes)))
-|#
 
 (defun atomic-branch(branch)
   "takes a list of formulas and returns the atomic ones."
@@ -279,6 +266,21 @@ two atoms."
     (if (equal (length test-branch) 1)
 	nil
 	(find-clash (rest atomic-branch)))))
+
+(defun find-clash-tree(tree)
+  "takes a list of branches/tree (list of lists of formulas) as input,
+returns the clashes found in the same order."
+  (let ((clashes nil))
+    (dolist (branch tree)
+      (setf clashes (cons (find-clash branch) clashes)))
+    (reverse clashes)))
+
+(defun is-sat(KB query)
+  "returns t if KB is sat, else nil"
+  (let ((clashes (find-clash-tree (mapcar #'atomic-branch (tableau kb query)))))
+    (if (remove-if #'null clashes)
+	t
+	nil)))
 
 ;;;;;;;;;;;;;;;;;;
 ;;;;;graphviz;;;;;
