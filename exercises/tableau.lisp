@@ -114,6 +114,13 @@ uses only and's or's & not's."
 
 ;;;;;;;;;;;;;;;;;
 ;;;;;tableau;;;;;
+
+(defstruct node
+  "structures nodes."
+  (formula)
+  (parent nil)
+  (visited nil))
+
 (defun norm(clause)
   "applies (to-nnf (normalize clause))."
   (to-nnf (normalize clause)))
@@ -132,8 +139,8 @@ atoms|ands|ors"
   (let ((children nil)
 	(leaf nil))
     (dolist (child-formula parent-formula)
-      (let ((child-var (gentemp)))
-	(setf (symbol-value child-var) (make-node :formula child-formula :parent parent-var))
+      (let ((child-var (gensym)))
+	(setf child-var (make-node :formula child-formula :parent parent-var))
 	(setf parent-var child-var)
 	(setf children (push-formula children child-var))
 	(setf leaf child-var)))
@@ -145,10 +152,9 @@ each having parent-var as parent. returns the nodes made, ordered by
 atoms|ands|ors."
   (let ((children nil))
     (dolist (child-formula parent-formula)
-      (let ((child-var (gentemp)))
-	(setf (symbol-value child-var) (make-node
-					:formula child-formula :parent
-					parent-var))
+      (let ((child-var (gensym)))
+	(setf child-var (make-node :formula child-formula :parent
+	parent-var))
 	(setf children (push-formula children child-var))))
     children))
 
@@ -156,9 +162,9 @@ atoms|ands|ors."
   "takes a list/stack and cons/snoc'es formulas according to their
 type (ands and atoms are prioritized over ors)."
   ;;um átomo depois de or é uma leaf? se conseguir fazer todos os ands antes de ors, sim.
-  (let ((formula (node-formula (symbol-value formula-var))))
+  (let ((formula (node-formula formula-var)))
     (cond ((is-atom formula)
-	   (progn (setf (node-visited (symbol-value formula-var)) T)
+	   (progn (setf (node-visited formula-var) T)
 		    (cons formula-var a-list)))
 	  ((modifier-is formula 'and) (cons formula-var a-list))
 	  ((modifier-is formula 'or) (snoc formula-var a-list)))))
@@ -179,8 +185,8 @@ on them if they haven't been visited yet"
   (let ((leaf (first nodes))
 	(children nil))
     (dolist (node (rest nodes))
-      (when (null (node-visited (symbol-value node))) ;;ignore atoms
-	(progn (setf (node-visited (symbol-value node)) T) (setf children (consapp (make-tree leaf (node-formula (symbol-value node))) children)))))
+      (when (null (node-visited node)) ;;ignore atoms
+	(setf (node-visited node) T) (setf children (consapp (make-tree leaf (node-formula node)) children))))
     (if (null children)
 	leaf
 	children)))
@@ -190,9 +196,9 @@ on them if they haven't been visited yet"
 on them if they haven't been visited yet."
   (let ((children nil))
     (dolist (node nodes)
-      (when (null (node-visited (symbol-value node)))
-	(progn (setf (node-visited (symbol-value node)) T)
-	       (setf children (cons (make-tree node (node-formula (symbol-value node))) children)))))
+      (when (null (node-visited node))
+	(setf (node-visited node) T)
+	       (setf children (cons (make-tree node (node-formula node)) children))))
     (if (null children)
 	nodes
 	children)))
@@ -201,8 +207,8 @@ on them if they haven't been visited yet."
   "takes a list of formulas and a query, negates the query, creates
 the root and calls make-tree on it."
   (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
-	(kb-var (gentemp)))
-    (setf (symbol-value kb-var) (make-node :formula queried-kb :visited T))
+	(kb-var (gensym)))
+    (setf kb-var (make-node :formula queried-kb :visited T))
     (make-tree kb-var queried-kb)))
 
 (defun draw-branch(node &optional branch)
@@ -210,8 +216,8 @@ the root and calls make-tree on it."
 returning a list of of nodes in generational order"
   (let ((parent (node-parent node)))
     (if (null parent)
-	(reverse (cons (node-formula node) branch))
-	(draw-branch (symbol-value parent) (cons (node-formula node) branch)))))
+	(cons (node-formula node) branch)
+	(draw-branch parent (cons (node-formula node) branch)))))
 
 (defun draw-tree(nodes &optional tree)
   "takes a list of nodes (leaves) and goes up to their parents drawing
@@ -220,11 +226,13 @@ the tree they form."
       tree
       (draw-tree (rest nodes) (cons (draw-branch (first nodes)) tree))))
 
-(defstruct node
-  "structures nodes."
-  (formula)
-  (parent nil)
-  (visited nil))
+;;;;;graphviz;;;;;
+(defun to-graphviz(KB query)
+  (princ "strict graph G { node[shape=\"underline\"];")
+  (princ (format nil "~{~{\"~S\"~^ -- ~};~%~}" (draw-tree (tableau KB
+  query))))
+  (princ "}")
+  (values))
 
 ;;;;;;;;;;;;;;;
 ;;;;;tests;;;;;
