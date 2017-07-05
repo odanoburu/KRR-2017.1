@@ -124,8 +124,7 @@ uses only and's or's & not's."
 (defstruct (node
 	     (:print-function
 	      (lambda (node stream k)
-		(null k)  ;ignoring the second argument k, which is
-			  ;level
+		(null k)  ;ignoring the second argument k (level)
 		(format stream "~A" (node-formula node)))))
   "structures nodes."
   (formula)
@@ -145,8 +144,8 @@ uses only and's or's & not's."
 (defun and-tree(parent-var parent-formula)
   "takes the formulas in (rest (and f1 f2 ... fn)) and makes nodes
 with the first having parent-var as parent and the rest having the
-previous node as parent. returns the children made, ordered by
-atoms|ands|ors"
+previous node as parent. returns (cons leaf children), ordered by
+atoms/ands|ors"
   (let ((children nil)
 	(leaf nil))
     (dolist (child-formula parent-formula)
@@ -172,7 +171,8 @@ atoms|ands|ors."
 (defun push-formula(a-list formula-var)
   "takes a list/stack and cons/snoc'es formulas according to their
 type (ands and atoms are prioritized over ors)."
-  ;;um átomo depois de or é uma leaf? se conseguir fazer todos os ands antes de ors, sim.
+  ;;um átomo depois de or é uma leaf? se conseguir fazer todos os ands
+  ;;antes de ors, sim.
   (let ((formula (node-formula formula-var)))
     (cond ((is-atom formula)
 	   (progn (setf (node-visited formula-var) T)
@@ -184,7 +184,7 @@ type (ands and atoms are prioritized over ors)."
   "makes nodes from parent-formula with parent-var as
 parent (parent-var not necessarily maps to parent-formula, as in
 tableau the parent might not be the 'biological' parent)"
-  (cond ((is-atom parent-formula) parent-formula)
+  (cond ((is-atom parent-formula) parent-var)
 	((modifier-is parent-formula 'and)
 	 (and-manage-tree (and-tree parent-var (rest parent-formula))))
 	((modifier-is parent-formula 'or)
@@ -198,7 +198,9 @@ on them if they haven't been visited yet"
 	(children nil))
     (dolist (node (rest nodes))
       (when (null (node-visited node)) ; ignore atoms
-	(setf (node-visited node) T) (setf children (consapp (make-tree leaf (node-formula node)) children))))
+	(setf (node-visited node) T) (setf
+	children (consapp (make-tree leaf (node-formula node))
+	children))))
     (if (null children)
 	leaf
 	children)))
@@ -208,9 +210,10 @@ on them if they haven't been visited yet"
 on them if they haven't been visited yet."
   (let ((children nil))
     (dolist (node nodes)
-      (when (null (node-visited node))
+;      (when (null (node-visited node))
 	(setf (node-visited node) T)
-	       (setf children (cons (make-tree node (node-formula node)) children))))
+	       (setf children (consapp (make-tree node (node-formula
+	       node)) children)));)
     (if (null children)
 	nodes
 	children)))
