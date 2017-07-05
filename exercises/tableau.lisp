@@ -197,7 +197,8 @@ on them if they haven't been visited yet"
 			     ; and-tree has the a copy of the leaf
 	(children nil))
     (dolist (node (rest nodes))
-      (when (null (node-visited node)) ; ignore atoms
+      (when (null (node-visited node)) ;ignore atoms, because they are
+				       ;not lost if they are leaf
 	(setf (node-visited node) T) (setf
 	children (consapp (make-tree leaf (node-formula node))
 	children))))
@@ -210,7 +211,8 @@ on them if they haven't been visited yet"
 on them if they haven't been visited yet."
   (let ((children nil))
     (dolist (node nodes)
-;      (when (null (node-visited node))
+;      (when (null (node-visited node)) ;can't ignore atoms, because
+;      they can be leaves
 	(setf (node-visited node) T)
 	       (setf children (consapp (make-tree node (node-formula
 	       node)) children)));)
