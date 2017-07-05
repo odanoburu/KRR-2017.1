@@ -21,9 +21,15 @@ and their negations."
   "maps elements in list and finally appends all resulted lists."
   (apply #'append (apply #'mapcar fn lsts)))
 
+(defun conslist(elist a-list)
+  "cons elist a-list if elist is a list, else cons (list elist) a-list."
+  (if (is-atom elist)
+      (cons (list elist) a-list)
+      (progn (assert (listp elist)) (cons elist a-list))))
+
 (defun consapp(elist a-list)
   "cons elist a-list if elist is atom, else append the two."
-  (if (atom elist)
+  (if (is-atom elist)
       (cons elist a-list)
       (append elist a-list)))
 
@@ -115,7 +121,12 @@ uses only and's or's & not's."
 ;;;;;;;;;;;;;;;;;
 ;;;;;tableau;;;;;
 
-(defstruct node
+(defstruct (node
+	     (:print-function
+	      (lambda (node stream k)
+		(null k)  ;ignoring the second argument k, which is
+			  ;level
+		(format stream "~A" (node-formula node)))))
   "structures nodes."
   (formula)
   (parent nil)
@@ -182,10 +193,11 @@ tableau the parent might not be the 'biological' parent)"
 (defun and-manage-tree(nodes)
   "takes the children made by and-tree and recursively calls maketree
 on them if they haven't been visited yet"
-  (let ((leaf (first nodes))
+  (let ((leaf (first nodes)) ; first element of nodes provided by
+			     ; and-tree has the a copy of the leaf
 	(children nil))
     (dolist (node (rest nodes))
-      (when (null (node-visited node)) ;;ignore atoms
+      (when (null (node-visited node)) ; ignore atoms
 	(setf (node-visited node) T) (setf children (consapp (make-tree leaf (node-formula node)) children))))
     (if (null children)
 	leaf
@@ -209,7 +221,7 @@ the root and calls make-tree on it."
   (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
 	(kb-var (gensym)))
     (setf kb-var (make-node :formula queried-kb :visited T))
-    (make-tree kb-var queried-kb)))
+    (draw-tree (make-tree kb-var queried-kb))))
 
 (defun draw-branch(node &optional branch)
   "takes a node (leaf) as input and goes up its parents,
@@ -226,11 +238,12 @@ the tree they form."
       tree
       (draw-tree (rest nodes) (cons (draw-branch (first nodes)) tree))))
 
+;;;;;;;;;;;;;;;;;;
 ;;;;;graphviz;;;;;
 (defun to-graphviz(KB query)
   (princ "strict graph G { node[shape=\"underline\"];")
-  (princ (format nil "~{~{\"~S\"~^ -- ~};~%~}" (draw-tree (tableau KB
-  query))))
+  (princ (format nil "~{~{\"~<~S~>\"~^ -- ~};~%~}" (tableau KB
+  query)))
   (princ "}")
   (values))
 
