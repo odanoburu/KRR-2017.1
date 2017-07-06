@@ -1,5 +1,3 @@
-;;; current development: clash
-
 ;;;;;;;;;;;;;;;
 ;;;;;utils;;;;;
 (defun snoc(an-atom a-list)
@@ -22,13 +20,14 @@ and their negations."
   (apply #'append (apply #'mapcar fn lsts)))
 
 (defun conslist(elist a-list)
-  "cons elist a-list if elist is a list, else cons (list elist) a-list."
+  "(cons elist a-list) if elist is a list, else (cons (list elist)
+a-list)."
   (if (is-atom elist)
       (cons (list elist) a-list)
       (progn (assert (listp elist)) (cons elist a-list))))
 
 (defun consapp(elist a-list)
-  "cons elist a-list if elist is atom, else append the two."
+  "(cons elist a-list) if elist is atom, else append the two."
   (if (is-atom elist)
       (cons elist a-list)
       (append elist a-list)))
@@ -81,6 +80,7 @@ clause."
   (assert (equal (length clause) 2))
   (cons 'some (list (first clause) (nnf-aux-negate (second clause)))))
 
+;;;;;entry;;;;;
 (defun aux-to-NNF(clause)
   "auxliary function to to-nnf."
   (mapcar #'to-NNF clause))
@@ -294,7 +294,7 @@ clash followed by its negation"
 				  (cons clash (cons (invert-signal clash) result))))))
 
 (defun to-graphviz(KB query)
-  ""
+  "plot tableaux derived from (and KB (not query) and their clashes."
   (let* ((tree (tableau KB query))
 	(clashes (find-clash-tree (mapcar #'atomic-branch tree))))
     (princ "strict graph G { node[shape=\"underline\"];")
