@@ -276,20 +276,32 @@ returns the clashes found in the same order."
     (reverse clashes)))
 
 (defun is-sat(KB query)
-  "returns t if KB is sat, else nil"
-  (let ((clashes (find-clash-tree (mapcar #'atomic-branch (tableau kb query)))))
-    (if (remove-if #'null clashes)
+  "returns t if query is satisfied by the KB, else nil"
+  (let ((clashes (find-clash-tree (mapcar #'atomic-branch (tableau kb query))))) ;removes non-atomic formulas to speed up computation
+    (if (remove-if #'null clashes) ;if there are no clashes this is nil
 	t
 	nil)))
 
 ;;;;;;;;;;;;;;;;;;
 ;;;;;graphviz;;;;;
+(defun duplicate-invert-clashes(clashes &optional result)
+  "takes a list of clashes, removes nils, and outputs a list with each
+clash followed by its negation"
+  (let ((clash (first clashes)))
+    (if (null clashes)
+	result
+	(duplicate-invert-clashes (rest clashes)
+				  (cons clash (cons (invert-signal clash) result))))))
+
 (defun to-graphviz(KB query)
-  (princ "strict graph G { node[shape=\"underline\"];")
-  (princ (format nil "~{~{\"~<~S~>\"~^ -- ~};~%~}" (tableau KB
-  query)))
-  (princ "}")
-  (values))
+  ""
+  (let* ((tree (tableau KB query))
+	(clashes (find-clash-tree (mapcar #'atomic-branch tree))))
+    (princ "strict graph G { node[shape=\"underline\"];")
+    (princ (format nil "~{~{\"~<~S~>\"~^ -- ~};~%~}" tree))
+    (princ (format nil "~{\"~<~S~>\"~^ -- \"~<~S~>\"[color=\"red\"];~% ~}" (duplicate-invert-clashes (remove-if #'null clashes))))
+    (princ "}")
+    (values)))
 
 ;;;;;;;;;;;;;;;
 ;;;;;tests;;;;;
