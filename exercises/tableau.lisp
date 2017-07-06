@@ -262,17 +262,17 @@ two atoms."
 	(test-branch (rest atomic-branch)))
     (dolist (formula test-branch)
       (when (equal test-atom formula)
-	(return-from find-clash formula)))
+	(return-from find-clash-branch formula)))
     (if (equal (length test-branch) 1)
 	nil
-	(find-clash (rest atomic-branch)))))
+	(find-clash-branch (rest atomic-branch)))))
 
 (defun find-clash-tree(tree)
   "takes a list of branches/tree (list of lists of formulas) as input,
 returns the clashes found in the same order."
   (let ((clashes nil))
     (dolist (branch tree)
-      (setf clashes (cons (find-clash branch) clashes)))
+      (setf clashes (cons (find-clash-branch branch) clashes)))
     (reverse clashes)))
 
 (defun is-sat(KB query)
