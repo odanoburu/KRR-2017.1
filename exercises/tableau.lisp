@@ -127,7 +127,6 @@ uses only and's or's & not's."
 
 ;;;;;;;;;;;;;;;;;
 ;;;;;tableau;;;;;
-
 (defstruct (node
 	     (:print-function
 	      (lambda (node stream k)
@@ -206,11 +205,11 @@ on them if they haven't been visited yet"
     (dolist (node (rest nodes))
       (when (null (node-visited node)) ;ignore atoms, because they are
 				       ;not lost if they are leaf
-	(setf (node-visited node) T) (setf
-	children (consapp (make-tree leaf (node-formula node))
+	(setf (node-visited node) T)
+	(setf children (consapp (make-tree leaf (node-formula node))
 	children))))
     (if (null children)
-	leaf
+	(list leaf)
 	children)))
 
 (defun or-manage-tree(nodes)
@@ -227,7 +226,7 @@ on them if they haven't been visited yet."
 	nodes
 	children)))
 
-(defun tableau(KB query)
+(defun tableau-kb(KB query)
   "takes a list of formulas and a query, negates the query, creates
 the root node, calls make-tree, then draw-tree, to return list of
 branches."
@@ -235,6 +234,14 @@ branches."
 	(kb-var (gensym)))
     (setf kb-var (make-node :formula queried-kb :visited T))
     (draw-tree (make-tree kb-var queried-kb))))
+
+(defun tableau(formula)
+  "takes a formula creates the root node, calls make-tree, then
+draw-tree, to return list of branches."
+  (let ((queried-formula (norm formula))
+	(root-var (gensym)))
+    (setf root-var (make-node :formula queried-formula :visited T))
+    (draw-tree (make-tree root-var queried-formula))))
 
 (defun draw-branch(node &optional branch)
   "takes a node (leaf) as input and goes up its parents,
@@ -275,12 +282,12 @@ returns the clashes found in the same order."
       (setf clashes (cons (find-clash-branch branch) clashes)))
     (reverse clashes)))
 
-(defun is-sat(KB query)
-  "returns t if query is satisfied by the KB, else nil"
-  (let ((clashes (find-clash-tree (mapcar #'atomic-branch (tableau kb query))))) ;removes non-atomic formulas to speed up computation
-    (if (remove-if #'null clashes) ;if there are no clashes this is nil
-	t
-	nil)))
+(defun is-sat(formula)
+  "returns t if formula is satisfied is satisfatible, else nil"
+  (let ((clashes (find-clash-tree (mapcar #'atomic-branch (tableau formula))))) ;removes non-atomic formulas to speed up computation
+    (if (null (member nil clashes)) ;if there are only clashes this is t
+	nil
+	t)))
 
 ;;;;;;;;;;;;;;;;;;
 ;;;;;graphviz;;;;;
@@ -293,9 +300,9 @@ clash followed by its negation"
 	(duplicate-invert-clashes (rest clashes)
 				  (cons clash (cons (invert-signal clash) result))))))
 
-(defun to-graphviz(KB query)
+(defun to-graphviz(formula)
   "plot tableaux derived from (and KB (not query) and their clashes."
-  (let* ((tree (tableau KB query))
+  (let* ((tree (tableau formula))
 	(clashes (find-clash-tree (mapcar #'atomic-branch tree))))
     (princ "strict graph G { node[shape=\"underline\"];")
     (princ (format nil "~{~{\"~<~S~>\"~^ -- ~};~%~}" tree))
