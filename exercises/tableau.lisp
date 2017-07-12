@@ -141,6 +141,12 @@ uses only and's or's & not's."
   (parent nil)
   (visited nil))
 
+(defun node-is-atomic(node)
+  "checks if node's formula is atomic"
+  (if (is-atom (node-formula node))
+      node
+      nil))
+
 (defun norm(clause)
   "applies (to-nnf (normalize clause))."
   (to-nnf (normalize clause)))
@@ -151,33 +157,6 @@ uses only and's or's & not's."
       (progn (assert (is-atom (first kb))) (norm (first kb)))
       (cons 'and (mapcar #'norm kb))))
 
-(defun and-tree(parent-var parent-formula)
-  "takes the formulas in (rest (and f1 f2 ... fn)) and makes nodes
-with the first having parent-var as parent and the rest having the
-previous node as parent. returns (cons leaf children), ordered by
-atoms/ands|ors"
-  (let ((children nil)
-	(leaf nil))
-    (dolist (child-formula parent-formula)
-      (let ((child-var (gensym)))
-	(setf child-var (make-node :formula child-formula :parent parent-var))
-	(setf parent-var child-var)
-	(setf children (push-formula children child-var))
-	(setf leaf child-var)))
-    (cons leaf children)))
-
-(defun or-tree(parent-var parent-formula)
-  "takes the formulas in (rest (or f1 f2 ... fn)) and makes nodes,
-each having parent-var as parent. returns the nodes made, ordered by
-atoms|ands|ors."
-  (let ((children nil))
-    (dolist (child-formula parent-formula)
-      (let ((child-var (gensym)))
-	(setf child-var (make-node :formula child-formula :parent
-	parent-var))
-	(setf children (push-formula children child-var))))
-    children))
-
 (defun push-formula(a-list formula-var)
   "takes a list/stack and cons/snoc'es formulas according to their
 type (ands and atoms are prioritized over ors)."
@@ -187,46 +166,63 @@ type (ands and atoms are prioritized over ors)."
 		    (cons formula-var a-list)))
 	  ((modifier-is formula 'and) (cons formula-var a-list))
 	  ((modifier-is formula 'or) (snoc formula-var a-list)))))
-  
+
+(defun push-formulas(a-list formulas)
+  "wraps push formula to push several formulas."
+  (if (endp formulas)
+      a-list
+      (push-formulas (push-formula a-list (first formulas)) (rest formulas))))
+
+(defun and-tree(parent-var parent-formula &optional children)
+  "takes the formulas in (rest (and f1 f2 ... fn)) and makes nodes
+with the first having parent-var as parent and the rest having the
+previous node as parent. returns the leaf and the children's formulas,
+ordered by atoms/ands|ors"
+  (if (endp parent-formula)
+      (values parent-var (mapcar #'node-formula (remove-if #'node-is-atomic children)))
+      (let ((child-var (gensym)))
+	(setf child-var (make-node :formula (first parent-formula) :parent parent-var))
+	(and-tree child-var (rest parent-formula) (cons child-var children)))))
+
+(defun or-tree(parent-var parent-formula &optional children)
+  "takes the formulas in (rest (or f1 f2 ... fn)) and makes nodes,
+each having parent-var as parent. returns the nodes made (leaves), and
+their formulas."
+  (if (endp parent-formula)
+      (values children (mapcar #'node-formula (remove-if #'node-is-atomic children)))
+      (let ((child-var (gensym)))
+	(setf child-var (make-node :formula (first parent-formula) :parent parent-var))
+	(or-tree parent-var (rest parent-formula) (cons child-var children)))))
+
+(defun tableaulify(leaves formulas)
+  "receives formulas in a list and nodes (leaves), and recursively
+calls make-tree with each leaf as parent-node"
+  (if (endp formulas)
+      leaves
+      (let ((formula (first formulas)))
+	(mapcar #'(lambda (leaf)
+		    (multiple-value-bind (new-leaves children) (make-tree leaf formula)
+		      (tableaulify new-leaves (push-formulas (rest formulas) children)))) leaves))))
+;;ver history
+;;multiple bindings so that and-tree returns leaf and non atomic children, leaf goes to leaves and the children go to nodes with push formula
+
 (defun make-tree(parent-var parent-formula)
   "makes nodes from parent-formula with parent-var as
 parent (parent-var not necessarily maps to parent-formula, as in
 tableau the parent might not be the 'biological' parent)."
-  (cond ((is-atom parent-formula) parent-var)
+  (cond ((is-atom parent-formula) (values parent-var nil))
 	((modifier-is parent-formula 'and)
-	 (and-manage-tree (and-tree parent-var (rest parent-formula))))
+	 (and-tree parent-var (rest parent-formula)))
 	((modifier-is parent-formula 'or)
-	 (or-manage-tree (or-tree parent-var (rest parent-formula))))))
+	 (or-tree parent-var (rest parent-formula)))))
 
-(defun and-manage-tree(nodes)
-  "takes the children made by and-tree and recursively calls maketree
-on them if they haven't been visited yet"
-  (let ((leaf (first nodes)) ; first element of nodes provided by
-			     ; and-tree has the a copy of the leaf
-	(children nil))
-    (dolist (node (rest nodes))
-      (when (null (node-visited node)) ;ignore atoms, because they are
-				       ;not lost if they are leaves
-	(setf (node-visited node) T)
-	(setf children (consapp (make-tree leaf (node-formula node))
-	children))))
-    (if (null children)
-	(list leaf)
-	children)))
-
-(defun or-manage-tree(nodes)
-  "takes the children made by or-tree and recursively calls make-tree
-on them if they haven't been visited yet."
-  (let ((children nil))
-    (dolist (node nodes)
-;      (when (null (node-visited node)) ;can't ignore atoms, because
-;      they can be leaves
-	(setf (node-visited node) T)
-	       (setf children (consapp (make-tree node (node-formula
-	       node)) children)));)
-    (if (null children)
-	nodes
-	children)))
+(defun tableau(formula)
+  "takes a formula creates the root node, calls make-tree, then
+draw-tree, to return list of branches."
+  (let ((queried-formula (norm formula))
+	(root-var (gensym)))
+    (setf root-var (make-node :formula queried-formula :visited T))
+    (draw-tree (make-tree root-var queried-formula))))
 
 (defun tableau-kb(KB query)
   "takes a list of formulas and a query, negates the query, creates
@@ -236,14 +232,6 @@ branches."
 	(kb-var (gensym)))
     (setf kb-var (make-node :formula queried-kb :visited T))
     (draw-tree (make-tree kb-var queried-kb))))
-
-(defun tableau(formula)
-  "takes a formula creates the root node, calls make-tree, then
-draw-tree, to return list of branches."
-  (let ((queried-formula (norm formula))
-	(root-var (gensym)))
-    (setf root-var (make-node :formula queried-formula :visited T))
-    (draw-tree (make-tree root-var queried-formula))))
 
 (defun draw-branch(node &optional branch)
   "takes a node (leaf) as input and goes up its parents,
