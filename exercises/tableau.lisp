@@ -1,3 +1,10 @@
+;; assumes well-formed input (and (and A) B) is not valid, as (and is
+;; a more than unary predicate.
+
+;; main entry points are is-sat, tableau, and tableau-kb. you can also
+;; run sbcl --noinform --load tableau.fasl --eval "(progn (to-graphviz
+;; 'formula (sb-ext:quit))" | dot -T png -o tree.png
+
 ;;;;;;;;;;;;;;;
 ;;;;;utils;;;;;
 (defun snoc(an-atom a-list)
@@ -14,10 +21,6 @@ and their negations."
 (defun modifier-is(clause modifier)
   "checks if the operator of clause is modifier."
   (equal (first clause) modifier))
-
-(defun mappend (fn &rest lsts)
-  "maps elements in list and finally appends all resulted lists."
-  (apply #'append (apply #'mapcar fn lsts)))
 
 (defun conslist(elist a-list)
   "(cons elist a-list) if elist is a list, else (cons (list elist)
@@ -128,10 +131,11 @@ uses only and's or's & not's."
 ;;;;;;;;;;;;;;;;;
 ;;;;;tableau;;;;;
 (defstruct (node
-	     (:print-function
+	     (:print-function ;this will make node printing only print
+			      ;its #formula
 	      (lambda (node stream k)
 		(null k)  ;ignoring the second argument k (level)
-		(format stream "~A" (node-formula node)))))
+		(format stream "#~A" (node-formula node)))))
   "structures nodes."
   (formula)
   (parent nil)
@@ -177,8 +181,6 @@ atoms|ands|ors."
 (defun push-formula(a-list formula-var)
   "takes a list/stack and cons/snoc'es formulas according to their
 type (ands and atoms are prioritized over ors)."
-  ;;um átomo depois de or é uma leaf? se conseguir fazer todos os ands
-  ;;antes de ors, sim.
   (let ((formula (node-formula formula-var)))
     (cond ((is-atom formula)
 	   (progn (setf (node-visited formula-var) T)
@@ -189,7 +191,7 @@ type (ands and atoms are prioritized over ors)."
 (defun make-tree(parent-var parent-formula)
   "makes nodes from parent-formula with parent-var as
 parent (parent-var not necessarily maps to parent-formula, as in
-tableau the parent might not be the 'biological' parent)"
+tableau the parent might not be the 'biological' parent)."
   (cond ((is-atom parent-formula) parent-var)
 	((modifier-is parent-formula 'and)
 	 (and-manage-tree (and-tree parent-var (rest parent-formula))))
@@ -204,7 +206,7 @@ on them if they haven't been visited yet"
 	(children nil))
     (dolist (node (rest nodes))
       (when (null (node-visited node)) ;ignore atoms, because they are
-				       ;not lost if they are leaf
+				       ;not lost if they are leaves
 	(setf (node-visited node) T)
 	(setf children (consapp (make-tree leaf (node-formula node))
 	children))))
@@ -270,7 +272,7 @@ two atoms."
     (dolist (formula test-branch)
       (when (equal test-atom formula)
 	(return-from find-clash-branch formula)))
-    (if (equal (length test-branch) 1)
+    (if (< (length test-branch) 1)
 	nil
 	(find-clash-branch (rest atomic-branch)))))
 
