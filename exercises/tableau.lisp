@@ -1,7 +1,7 @@
 ;; assumes well-formed input (and (and A) B) is not valid, as (and is
 ;; a more than unary predicate.
 
-;; main entry points are is-sat, tableau, and tableau-kb. you can also
+;; main entry points are is-sat, tableau. you can also
 ;; sbcl --noinform --load tableau.fasl --eval "(progn (to-graphviz 'formula)  (sb-ext:quit))" | dot -T svg -o tree.svg
 
 
@@ -165,12 +165,6 @@ uses only and's or's & not's."
   "applies (to-nnf (normalize clause))."
   (to-nnf (normalize clause)))
 
-(defun KB-to-nnf(KB)
-  "takes a KB (list of clauses) and returns their conjunction in NNF."
-  (if (equal (length kb) 1)
-      (progn (assert (is-atom (first kb))) (norm (first kb)))
-      (cons 'and (mapcar #'norm kb))))
-
 (defun push-formula(a-list formula)
   "takes a list/stack and cons/snoc'es formulas according to their
 type (ands and atoms are prioritized over ors)."
@@ -237,7 +231,7 @@ calls make-tree with each leaf as parent-node"
 draw-tree, to return list of branches."
   (let ((root-var (gensym)))
     (setf root-var (make-node :formula (norm formula)))
-    (draw-tree (flatten (tableaulify root-var)))))
+    (draw-tree (flatten (tableaulify root-var))))) ;how to not need flatten?
 
 (defun draw-branch(node &optional branch)
   "takes a node (leaf) as input and goes up its parents,
@@ -319,7 +313,6 @@ clash followed by its negation"
   (assert (equal '(ONLY C (OR (NOT D) (NOT E))) (nnf-some (rest '(some C (and D E))))))
   (assert (equal '(SOME C (AND (NOT E) (NOT F))) (nnf-only (rest '(only C (or E F))))))
   (assert (equal '(OR (ONLY R (OR (NOT A) B)) (SOME R (AND A B))) (to-nnf '(or (not (some r (and A (not B)))) (not (only r (or (not A) (not (not (not B))))))))))
-  (assert (equal '((OR (NOT A) (AND (OR B E) (OR (NOT B) (NOT E)))) (AND C (NOT D))) (KB-to-nnf '((not (and a (equiv b e))) (not (or (not c) d))))))
   ;;(assert (equal '(AND (AND C (NOT D)) E C (NOT D)) (tableau-and (rest '(and C (not D))) '(and (and C (not D)) E))))
   (assert (equal '(OR (AND (NOT (OR (NOT A) B)) (NOT (OR (NOT A) B)) (NOT (OR (NOT (NOT B)) (NOT A)))) (AND (OR (NOT A) B) (OR (NOT A) B) (OR (NOT (NOT B)) (NOT A)))) (normalize '(equiv (implies a b) (or (not a) b) (implies (not b) (not a))))))
   t)
