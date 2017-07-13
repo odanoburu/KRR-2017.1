@@ -2,8 +2,8 @@
 ;; a more than unary predicate.
 
 ;; main entry points are is-sat, tableau, and tableau-kb. you can also
-;; run sbcl --noinform --load tableau.fasl --eval "(progn (to-graphviz
-;; 'formula (sb-ext:quit))" | dot -T png -o tree.png
+;; sbcl --noinform --load tableau.fasl --eval "(progn (to-graphviz 'formula)  (sb-ext:quit))" | dot -T svg -o tree.svg
+
 
 ;;;;;;;;;;;;;;;
 ;;;;;utils;;;;;
@@ -17,6 +17,12 @@ and their negations."
   (cond ((atom clause) clause)
 	((and (modifier-is clause 'not) (atom (cadr clause)) (equal (length clause) 2)) clause)
 	(t nil)))
+
+(defun flatten (a-list)
+  "flatten list."
+  (cond ((null a-list) nil)
+        ((atom (first a-list)) (cons (first a-list) (flatten (rest a-list))))
+        (t (append (flatten (first a-list)) (flatten (rest a-list))))))
 
 (defun modifier-is(clause modifier)
   "checks if the operator of clause is modifier."
@@ -42,8 +48,27 @@ a-list)."
       (norm-aux-negate formula)
       (cadr formula)))
 
+(defun list-if(predicate formula)
+  "lists the formula if it is an atom."
+  (if (funcall predicate formula)
+      (list formula)
+      formula))
+
 ;;;;;;;;;;;;;
 ;;;;;NNF;;;;;
+
+;;;;;entry;;;;;
+(defun to-NNF(clause)
+  "turns a clause into NNF."
+  (cond ((is-atom clause) clause)
+	((modifier-is clause 'not) (to-NNF (nnf-not (cadr clause))))
+	(t (aux-to-NNF clause)))) ;;can implement check here
+
+;;;;;aux;;;;;
+(defun aux-to-NNF(clause)
+  "auxliary function to to-nnf."
+  (mapcar #'to-NNF clause))
+
 (defun nnf-not(clause)
   "argument is (rest (not clause)). this function applies NNF to a
 clause."
@@ -82,17 +107,6 @@ clause."
   "format is (only role (concept)). applies nnf rule for only (∀)."
   (assert (equal (length clause) 2))
   (cons 'some (list (first clause) (nnf-aux-negate (second clause)))))
-
-;;;;;entry;;;;;
-(defun aux-to-NNF(clause)
-  "auxliary function to to-nnf."
-  (mapcar #'to-NNF clause))
-
-(defun to-NNF(clause)
-  "turns a clause into NNF."
-  (cond ((is-atom clause) clause)
-	((modifier-is clause 'not) (to-NNF (nnf-not (cadr clause))))
-	(t (aux-to-NNF clause)))) ;;can implement check here
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;normalization;;;;;
@@ -157,15 +171,12 @@ uses only and's or's & not's."
       (progn (assert (is-atom (first kb))) (norm (first kb)))
       (cons 'and (mapcar #'norm kb))))
 
-(defun push-formula(a-list formula-var)
+(defun push-formula(a-list formula)
   "takes a list/stack and cons/snoc'es formulas according to their
 type (ands and atoms are prioritized over ors)."
-  (let ((formula (node-formula formula-var)))
-    (cond ((is-atom formula)
-	   (progn (setf (node-visited formula-var) T)
-		    (cons formula-var a-list)))
-	  ((modifier-is formula 'and) (cons formula-var a-list))
-	  ((modifier-is formula 'or) (snoc formula-var a-list)))))
+    (cond ((is-atom formula) (cons formula a-list))
+	  ((modifier-is formula 'and) (cons formula a-list))
+	  ((modifier-is formula 'or) (snoc formula a-list))))
 
 (defun push-formulas(a-list formulas)
   "wraps push formula to push several formulas."
@@ -176,62 +187,57 @@ type (ands and atoms are prioritized over ors)."
 (defun and-tree(parent-var parent-formula &optional children)
   "takes the formulas in (rest (and f1 f2 ... fn)) and makes nodes
 with the first having parent-var as parent and the rest having the
-previous node as parent. returns the leaf and the children's formulas,
-ordered by atoms/ands|ors"
+previous node as parent. returns the leaf."
   (if (endp parent-formula)
-      (values parent-var (mapcar #'node-formula (remove-if #'node-is-atomic children)))
+      (list parent-var)
       (let ((child-var (gensym)))
 	(setf child-var (make-node :formula (first parent-formula) :parent parent-var))
 	(and-tree child-var (rest parent-formula) (cons child-var children)))))
 
 (defun or-tree(parent-var parent-formula &optional children)
   "takes the formulas in (rest (or f1 f2 ... fn)) and makes nodes,
-each having parent-var as parent. returns the nodes made (leaves), and
-their formulas."
+each having parent-var as parent. returns the nodes made (leaves)."
   (if (endp parent-formula)
-      (values children (mapcar #'node-formula (remove-if #'node-is-atomic children)))
+      children
       (let ((child-var (gensym)))
 	(setf child-var (make-node :formula (first parent-formula) :parent parent-var))
 	(or-tree parent-var (rest parent-formula) (cons child-var children)))))
-
-(defun tableaulify(leaves formulas)
-  "receives formulas in a list and nodes (leaves), and recursively
-calls make-tree with each leaf as parent-node"
-  (if (endp formulas)
-      leaves
-      (let ((formula (first formulas)))
-	(mapcar #'(lambda (leaf)
-		    (multiple-value-bind (new-leaves children) (make-tree leaf formula)
-		      (tableaulify new-leaves (push-formulas (rest formulas) children)))) leaves))))
-;;ver history
-;;multiple bindings so that and-tree returns leaf and non atomic children, leaf goes to leaves and the children go to nodes with push formula
 
 (defun make-tree(parent-var parent-formula)
   "makes nodes from parent-formula with parent-var as
 parent (parent-var not necessarily maps to parent-formula, as in
 tableau the parent might not be the 'biological' parent)."
-  (cond ((is-atom parent-formula) (values parent-var nil))
+  (cond ((is-atom parent-formula) (list parent-var))
 	((modifier-is parent-formula 'and)
 	 (and-tree parent-var (rest parent-formula)))
 	((modifier-is parent-formula 'or)
-	 (or-tree parent-var (rest parent-formula)))))
+	 (or-tree parent-var (rest parent-formula)))
+	(t (list parent-var))))
+
+(defun get-unvisited-parents-formulas(leaf &optional unvisited-parents)
+  "gets the formulas of the unvisited parents of leaf (including its
+own formula)."
+  (if (or (null leaf) (node-visited leaf))
+      (remove-if #'is-atom unvisited-parents)
+      (progn (setf (node-visited leaf) T)
+	     (get-unvisited-parents-formulas (node-parent leaf) (cons (node-formula leaf) unvisited-parents)))))
+
+(defun tableaulify(leaf &optional formulas)
+  "receives formulas in a list and nodes (leaves), and recursively
+calls make-tree with each leaf as parent-node"
+  (if (node-visited leaf)
+      leaf
+      (let ((new-formulas (push-formulas formulas (get-unvisited-parents-formulas leaf))))
+	(mapcar #'(lambda (new-leaf)
+		    (tableaulify new-leaf (rest new-formulas)))
+		(make-tree leaf (first new-formulas))))))
 
 (defun tableau(formula)
   "takes a formula creates the root node, calls make-tree, then
 draw-tree, to return list of branches."
-  (let ((queried-formula (norm formula))
-	(root-var (gensym)))
-    (setf root-var (make-node :formula queried-formula :visited T))
-    (draw-tree (make-tree root-var queried-formula))))
-
-(defun tableau-kb(KB query)
-  "takes a list of formulas and a query, negates the query, creates
-the root node, calls make-tree, then draw-tree, to return list of
-branches."
-  (let ((queried-kb (kb-to-nnf (snoc (list 'not query) kb)))
-	(kb-var (gensym)))
-    (setf kb-var (make-node :formula queried-kb :visited T))
-    (draw-tree (make-tree kb-var queried-kb))))
+  (let ((root-var (gensym)))
+    (setf root-var (make-node :formula (norm formula)))
+    (draw-tree (flatten (tableaulify root-var)))))
 
 (defun draw-branch(node &optional branch)
   "takes a node (leaf) as input and goes up its parents,
